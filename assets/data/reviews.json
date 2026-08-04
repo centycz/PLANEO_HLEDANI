@@ -1,0 +1,79 @@
+{
+  "$comment": "Customer reviews. Ratings feed the aggregateRating JSON-LD on index.html — keep `summary` in sync when adding entries.",
+  "version": "2026-08-01",
+  "summary": { "average": 4.9, "count": 213 },
+  "items": [
+    {
+      "id": "r1",
+      "name": "Petra Nováková",
+      "place": "Brno-Žabovřesky",
+      "rating": 5,
+      "date": "2026-07-19",
+      "attraction": "Královský hrad",
+      "text": "Přivezli hrad hodinu před oslavou, postavili ho za dvacet minut a večer si ho zase tiše odvezli, zatímco děti spaly. Nemusela jsem řešit vůbec nic — a to je na oslavě pro dvanáct dětí k nezaplacení."
+    },
+    {
+      "id": "r2",
+      "name": "Martin Dvořák",
+      "place": "Šlapanice",
+      "rating": 5,
+      "date": "2026-07-04",
+      "attraction": "Aqua Rush",
+      "text": "Vodní skluzavka udělala z obyčejné zahradní party událost roku. Kluci z ní nešli tři hodiny. Oceňuji, že pan technik vysvětlil pravidla dětem, ne jen mně."
+    },
+    {
+      "id": "r3",
+      "name": "Lucie Horáková",
+      "place": "Blansko",
+      "rating": 5,
+      "date": "2026-06-28",
+      "attraction": "Bublina",
+      "text": "Dvouletá dcera se poprvé odvážila mezi ostatní děti. Bazének má nízký nájezd, takže jsem ji nemusela hlídat na krok. Míčky byly evidentně čerstvě prané."
+    },
+    {
+      "id": "r4",
+      "name": "Jakub Svoboda",
+      "place": "Vyškov",
+      "rating": 5,
+      "date": "2026-06-14",
+      "attraction": "Adventure dráha",
+      "text": "Objednávali jsme na dětský den ve škole, 90 dětí ve třech blocích. Dorazili s předstihem, dráhu postavili mimo běžný provoz a celý den drželi dohled. Naprosto profesionální."
+    },
+    {
+      "id": "r5",
+      "name": "Tereza Marková",
+      "place": "Židlochovice",
+      "rating": 5,
+      "date": "2026-05-30",
+      "attraction": "Jednorožec",
+      "text": "Dcera si přála jednorožce a dostala jednorožce. Barvy jsou opravdu takové jako na fotkách, ne křiklavé. Fotky z oslavy vypadají skvěle."
+    },
+    {
+      "id": "r6",
+      "name": "Ondřej Bláha",
+      "place": "Kuřim",
+      "rating": 4,
+      "date": "2026-05-11",
+      "attraction": "Pirátská loď",
+      "text": "Loď je opravdu velká — dobře, že mě předem upozornili, ať změřím zahradu. Nakonec jsme přesouvali trampolínu, ale vešlo se to. Komunikace před akcí byla přesná a bez řečí."
+    },
+    {
+      "id": "r7",
+      "name": "Michaela Pokorná",
+      "place": "Znojmo",
+      "rating": 5,
+      "date": "2026-04-26",
+      "attraction": "Svatební oblouk",
+      "text": "Oblouk jsme měli na obřad v zahradě a pak posloužil jako fotokoutek. Dekoraci sladili s naší barvou přesně podle vzorku. Hosté si mysleli, že je od floristky."
+    },
+    {
+      "id": "r8",
+      "name": "Radek Urban",
+      "place": "Hodonín",
+      "rating": 5,
+      "date": "2026-04-12",
+      "attraction": "Mini hrad",
+      "text": "Máme dvorek 5 × 5 metrů a čekal jsem, že to nepůjde. Mini hrad prošel brankou a zbylo místo i na stůl. Cena přesně jak byla v potvrzení, žádné příplatky navíc."
+    }
+  ]
+}

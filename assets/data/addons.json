@@ -1,0 +1,115 @@
+{
+  "$comment": "Add-on services. Designed to grow: adding an entry here makes it selectable in the booking flow and visible in the services grid without touching any code.",
+  "version": "2026-08-01",
+  "currency": "CZK",
+  "groups": [
+    {
+      "id": "obcerstveni",
+      "label": "Občerstvení",
+      "items": [
+        {
+          "id": "popcorn",
+          "name": "Popcornovač",
+          "icon": "i-popcorn",
+          "price": 1200,
+          "unit": "akce",
+          "note": "včetně 50 porcí a kornoutků",
+          "description": "Retro stroj na popcorn i s obsluhou při předání. Vůně, kterou děti ucítí od branky."
+        },
+        {
+          "id": "cukrova-vata",
+          "name": "Cukrová vata",
+          "icon": "i-cotton-candy",
+          "price": 1400,
+          "unit": "akce",
+          "note": "včetně 50 porcí a špejlí",
+          "description": "Stroj na cukrovou vatu s cukrem ve třech příchutích. Nejrychleji mizející položka každé oslavy."
+        },
+        {
+          "id": "limonadovy-bar",
+          "name": "Limonádový bar",
+          "icon": "i-cake",
+          "price": 1600,
+          "unit": "akce",
+          "note": "2 druhy, 10 l, sklenice",
+          "description": "Nádoby s domácí limonádou, led, sklenice a stojan. Postaráme se, aby bylo pořád co pít."
+        }
+      ]
+    },
+    {
+      "id": "vybaveni",
+      "label": "Párty vybavení",
+      "items": [
+        {
+          "id": "party-stan",
+          "name": "Párty stan 3 × 6 m",
+          "icon": "i-tent",
+          "price": 1800,
+          "unit": "akce",
+          "note": "včetně stavby",
+          "description": "Zastřešení pro případ deště nebo příliš ostrého slunce. Postavíme společně s atrakcí."
+        },
+        {
+          "id": "stoly-lavice",
+          "name": "Stoly a lavice",
+          "icon": "i-chair",
+          "price": 900,
+          "unit": "sada",
+          "note": "sada pro 24 osob",
+          "description": "Tři pivní sety s ubrusy. Dovezeme, rozestavíme a po akci zase odvezeme."
+        },
+        {
+          "id": "ozvuceni",
+          "name": "Ozvučení s mikrofonem",
+          "icon": "i-music",
+          "price": 1100,
+          "unit": "akce",
+          "note": "reproduktor, mikrofon, Bluetooth",
+          "description": "Bezdrátový reproduktor s mikrofonem — na hudbu, soutěže i gratulaci."
+        },
+        {
+          "id": "balonkova-vyzdoba",
+          "name": "Balónková výzdoba",
+          "icon": "i-balloon",
+          "price": 1500,
+          "unit": "od",
+          "note": "girlanda na míru",
+          "description": "Balónková girlanda laděná do barev oslavy. Cena podle rozsahu, návrh pošleme předem."
+        }
+      ]
+    },
+    {
+      "id": "program",
+      "label": "Program a vzpomínky",
+      "items": [
+        {
+          "id": "animator",
+          "name": "Animátor programu",
+          "icon": "i-users",
+          "price": 2500,
+          "unit": "2 hodiny",
+          "note": "soutěže, hry, malování na obličej",
+          "description": "Vyškolený animátor, který drží program pohromadě, zatímco vy si užíváte návštěvu."
+        },
+        {
+          "id": "fotokoutek",
+          "name": "Fotokoutek s rekvizitami",
+          "icon": "i-camera",
+          "price": 1900,
+          "unit": "akce",
+          "note": "pozadí, rekvizity, okamžitý tisk",
+          "description": "Fotostěna, bedna rekvizit a tiskárna na místě. Každý host si odnese fotku."
+        },
+        {
+          "id": "foto-video",
+          "name": "Fotograf na oslavu",
+          "icon": "i-sparkles",
+          "price": 3800,
+          "unit": "2 hodiny",
+          "note": "80+ upravených fotografií",
+          "description": "Reportážní focení celé oslavy. Galerii dostanete do pěti dnů."
+        }
+      ]
+    }
+  ]
+}

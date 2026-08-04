@@ -1,0 +1,36 @@
+{
+  "$comment": "Availability for the public calendar. The static adapter derives a plausible baseline from `rules` (so the calendar stays alive no matter when the page is opened) and lets `overrides` win. A real backend replaces this file wholesale with GET /api/v1/availability?from=&to= returning the same { date: status } shape.",
+  "version": "2026-08-01",
+  "statuses": {
+    "free":    { "label": "Volno",           "tone": "ok"   },
+    "limited": { "label": "Poslední kusy",   "tone": "warn" },
+    "full":    { "label": "Obsazeno",        "tone": "busy" },
+    "closed":  { "label": "Nejezdíme",       "tone": "off"  }
+  },
+  "rules": {
+    "leadTimeDays": 2,
+    "horizonDays": 240,
+    "closedWeekdays": [],
+    "seasonHighMonths": [5, 6, 7, 8, 9],
+    "weekendLoad": 0.62,
+    "weekdayLoad": 0.14,
+    "seed": 20260801
+  },
+  "overrides": {
+    "2026-08-08": "full",
+    "2026-08-09": "full",
+    "2026-08-15": "full",
+    "2026-08-16": "limited",
+    "2026-08-22": "full",
+    "2026-08-29": "limited",
+    "2026-08-30": "free",
+    "2026-09-05": "full",
+    "2026-09-06": "limited",
+    "2026-09-12": "full",
+    "2026-12-24": "closed",
+    "2026-12-25": "closed",
+    "2026-12-26": "closed",
+    "2026-12-31": "closed",
+    "2027-01-01": "closed"
+  }
+}

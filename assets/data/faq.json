@@ -1,0 +1,56 @@
+{
+  "$comment": "FAQ content. index.html renders these into <details> elements and mirrors them into FAQPage JSON-LD.",
+  "version": "2026-08-01",
+  "items": [
+    {
+      "id": "q-prostor",
+      "q": "Kolik místa potřebuji na zahradě?",
+      "a": "U každé atrakce najdete přesné rozměry. K nim připočtěte metr volného prostoru ze všech stran a asi 2 metry před vstupem. Nejmenší Mini hrad si vystačí s plochou 4 × 4 metry, největší Pirátská loď potřebuje zhruba 8 × 7 metrů. Když si nejste jisti, pošlete nám fotku zahrady — odpovíme do pár hodin."
+    },
+    {
+      "id": "q-povrch",
+      "q": "Na jaký povrch se dá atrakce postavit?",
+      "a": "Nejlépe na rovný trávník, kde atrakci ukotvíme kolíky. Postavíme ji i na dlažbu, beton nebo do tělocvičny — v tom případě používáme zátěžové pytle a podkladovou plachtu. Na štěrk, ostrý kámen ani na svah se atrakce stavět nedá."
+    },
+    {
+      "id": "q-elektrina",
+      "q": "Jak je to s elektřinou?",
+      "a": "Potřebujeme běžnou zásuvku 230 V do 25 metrů od místa stavby; prodlužovací kabel vozíme s sebou. Ventilátor běží po celou dobu, spotřeba odpovídá zhruba jedné žárovce v troubě — u většiny atrakcí 0,8 až 1,5 kW. Pokud elektřina v místě není, dovezeme tichou elektrocentrálu za příplatek 900 Kč."
+    },
+    {
+      "id": "q-pocasi",
+      "q": "Co když bude pršet?",
+      "a": "Do 24 hodin před akcí můžete termín zdarma přesunout na jiný den — bez ptaní a bez storno poplatku. Při silném větru nad 38 km/h atrakci z bezpečnostních důvodů nestavíme a vracíme celou zálohu. Slabý déšť většině atrakcí nevadí, jen je potřeba počítat s kluzkým povrchem."
+    },
+    {
+      "id": "q-cena",
+      "q": "Co všechno je v ceně?",
+      "a": "Dovoz v zóně 1, stavba, seznámení s pravidly, ventilátor s kabeláží, kotvení, pojištění odpovědnosti a odvoz po skončení. Cena platí za celý den — atrakci obvykle přivážíme dopoledne a odvážíme večer. Nic dalšího se na místě nedoplácí."
+    },
+    {
+      "id": "q-hygiena",
+      "q": "Jak řešíte čistotu a bezpečnost?",
+      "a": "Každou atrakci po akci umýváme a dezinfikujeme a před dalším použitím kontrolujeme švy, kotvení a ventilátor. Všechny atrakce splňují evropskou normu EN 14960 a máme uzavřené pojištění odpovědnosti do 10 milionů korun. Revizní protokoly vám rádi ukážeme."
+    },
+    {
+      "id": "q-dohled",
+      "q": "Musí atrakci někdo hlídat?",
+      "a": "Ano — po celou dobu provozu musí být u atrakce dospělá osoba. Při předání vás seznámíme s pravidly a předáme je i písemně. Pokud nechcete dohled řešit sami, můžete si objednat našeho animátora, který se o děti i o atrakci postará."
+    },
+    {
+      "id": "q-rezervace",
+      "q": "Jak funguje rezervace a platba?",
+      "a": "Vyplníte formulář nebo zavoláte, my do 2 hodin potvrdíme dostupnost a pošleme shrnutí. Termín blokujeme zálohou 30 % převodem, zbytek platíte v hotovosti nebo kartou při předání. Storno je zdarma do 48 hodin před akcí."
+    },
+    {
+      "id": "q-vzdalenost",
+      "q": "Jezdíte i mimo Brno?",
+      "a": "Ano, obsluhujeme celou jižní Moravu. Do 15 km od Brna je doprava zdarma, do 30 km 400 Kč a do 60 km 800 Kč. Dál dojedeme také — cenu dohodneme individuálně podle vzdálenosti."
+    },
+    {
+      "id": "q-vek",
+      "q": "Pro jaký věk jsou atrakce vhodné?",
+      "a": "U každé atrakce uvádíme doporučené rozpětí. Nejmenším dětem od dvou let je určená Bublina a Mini hrad, školákům vyhovují velké hrady a skluzavky, teenagerům Adventure dráha a Sporťák aréna. Nedoporučujeme míchat batolata a velké děti na jedné atrakci současně."
+    }
+  ]
+}

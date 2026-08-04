@@ -1,0 +1,44 @@
+{
+  "name": "HOPLA — skákací hrady a nafukovací atrakce",
+  "short_name": "HOPLA",
+  "description": "Půjčovna skákacích hradů a nafukovacích atrakcí pro dětské oslavy. Brno a celá jižní Morava.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fff7ef",
+  "theme_color": "#0e1020",
+  "lang": "cs",
+  "dir": "ltr",
+  "categories": ["lifestyle", "shopping", "entertainment"],
+  "icons": [
+    { "src": "/assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-256.png", "sizes": "256x256", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Rezervovat termín",
+      "short_name": "Rezervace",
+      "description": "Otevřít rezervační formulář",
+      "url": "/?source=pwa#rezervace",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Volné termíny",
+      "short_name": "Termíny",
+      "description": "Zobrazit kalendář obsazenosti",
+      "url": "/?source=pwa#terminy",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Naše atrakce",
+      "short_name": "Atrakce",
+      "description": "Prohlédnout nabídku atrakcí",
+      "url": "/?source=pwa#atrakce",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

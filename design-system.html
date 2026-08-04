@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="cs" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Designový systém — HOPLA</title>
+<meta name="description" content="Živý přehled designového systému HOPLA: barvy, typografie, prostor, elevace, pohyb a komponenty.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/img/logo-mark.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/outfit-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/hopla.css">
+<style>
+  /* Styles that belong to this page only — never to the product. */
+  .ds-head { padding-block: var(--sp-16) var(--sp-10); border-bottom: 1px solid var(--border-subtle); }
+  .ds-nav { position: sticky; top: 0; z-index: var(--z-sticky); background: rgb(var(--rgb-cream) / .84);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--border-subtle); }
+  .ds-nav ul { display: flex; gap: var(--sp-1); overflow-x: auto; padding: var(--sp-3) 0; scrollbar-width: none; }
+  .ds-nav ul::-webkit-scrollbar { display: none; }
+  .ds-nav a { padding: .5rem .875rem; border-radius: var(--r-pill); font-size: var(--fs-sm);
+              font-weight: var(--fw-medium); color: var(--text-muted); white-space: nowrap; }
+  .ds-nav a:hover { background: rgb(var(--rgb-ink) / .05); color: var(--text-strong); }
+  .ds-sec { padding-block: var(--sp-16); border-bottom: 1px solid var(--border-subtle); }
+  .ds-sec > h2 { margin-bottom: var(--sp-3); }
+  .ds-sec > p.lead { margin-bottom: var(--sp-10); max-width: 62ch; }
+  .ds-grid { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fill, minmax(min(100%,190px),1fr)); }
+  .ds-row { display: flex; flex-wrap: wrap; gap: var(--sp-4); align-items: center; }
+  .ds-panel { padding: var(--sp-6); border: 1px solid var(--border-subtle); border-radius: var(--r-lg);
+              background: var(--surface-raised); }
+  .ds-label { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); }
+  .ds-name { font-weight: var(--fw-semi); font-size: var(--fs-sm); color: var(--text-strong); }
+
+  .sw { border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--border-subtle); }
+  .sw__chip { height: 88px; }
+  .sw__meta { padding: var(--sp-3) var(--sp-4); background: var(--surface-raised); display: grid; gap: 2px; }
+
+  .type-row { display: grid; gap: var(--sp-2); padding-block: var(--sp-5);
+              border-bottom: 1px dashed var(--border-subtle); }
+  .type-row:last-child { border-bottom: 0; }
+  .space-bar { height: 22px; border-radius: var(--r-xs); background: var(--grad-sunset); }
+  .radius-demo { height: 92px; background: var(--grad-splash); border: 1px solid var(--border-subtle); }
+  .shadow-demo { height: 92px; border-radius: var(--r-md); background: var(--surface-raised); }
+  .motion-demo { height: 56px; border-radius: var(--r-pill); background: var(--grad-sunset);
+                 width: 56px; }
+  .ds-sec--dark { background: var(--c-ink); color: var(--text-on-dark-muted); }
+  .ds-sec--dark h2, .ds-sec--dark h3 { color: var(--c-cream); }
+  .ds-sec--dark .ds-panel { background: rgb(var(--rgb-cream) / .05); border-color: rgb(var(--rgb-cream) / .12); }
+  .ds-sec--dark .ds-name { color: var(--c-cream); }
+  .ds-sec--dark .ds-label { color: rgb(var(--rgb-cream) / .55); }
+  .glass-stage { background: var(--grad-splash); padding: var(--sp-8); border-radius: var(--r-xl); }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#ds">Přeskočit na obsah</a>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h15.5m0 0-6-6m6 6-6 6"/></symbol>
+  <symbol id="i-castle" viewBox="0 0 24 24"><path d="M3.4 20.4V8.6l2.3 1.4V6.4l2.6 1.5V5.2l3.7 2 3.7-2v2.7l2.6-1.5V10l2.3-1.4v11.8z"/><path d="M9.8 20.4v-4.2a2.2 2.2 0 0 1 4.4 0v4.2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.2 5.5 5.8v5.4c0 4.1 2.7 7.5 6.5 9.1 3.8-1.6 6.5-5 6.5-9.1V5.8z"/><path d="m9.2 11.8 2 2 3.6-3.9"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.3 3.8h2.9l1.5 3.7-1.9 1.2a11.6 11.6 0 0 0 5 5l1.2-1.9 3.7 1.5v2.9a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.3 6a2 2 0 0 1 2-2.2z"/></symbol>
+  <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3.2s6 6.2 6 10.2a6 6 0 1 1-12 0c0-4 6-10.2 6-10.2z"/></symbol>
+</svg>
+
+<header class="ds-head">
+  <div class="container">
+    <a class="logo" href="/" style="color:var(--c-ink)">
+      <svg class="logo__mark" viewBox="0 0 48 48" aria-hidden="true">
+        <defs>
+          <linearGradient id="dsA" x1="7" y1="6" x2="41" y2="44" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#ff5c3e"/><stop offset="1" stop-color="#ff9e2c"/></linearGradient>
+          <linearGradient id="dsB" x1="19" y1="20" x2="30" y2="32" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#19c9e8"/><stop offset="1" stop-color="#7c5cff"/></linearGradient>
+        </defs>
+        <path d="M9.6 40.4V24a14.4 14.4 0 0 1 28.8 0v16.4" fill="none" stroke="url(#dsA)" stroke-width="9.2" stroke-linecap="round"/>
+        <circle cx="24" cy="25.6" r="5.1" fill="url(#dsB)"/>
+      </svg>
+      <span class="logo__word">HOPLA</span>
+    </a>
+    <h1 style="margin-top:var(--sp-8)">Designový systém</h1>
+    <p class="lead" style="max-width:56ch">Živý přehled. Každý prvek na této stránce je
+      vykreslený stejným CSS jako produkční web — když se změní token, změní se i tady.</p>
+    <p class="ds-label">Zdroj pravdy: <code>assets/css/tokens.css</code></p>
+  </div>
+</header>
+
+<nav class="ds-nav" aria-label="Sekce systému">
+  <div class="container"><ul>
+    <li><a href="#barvy">Barvy</a></li>
+    <li><a href="#gradienty">Gradienty</a></li>
+    <li><a href="#typografie">Typografie</a></li>
+    <li><a href="#prostor">Prostor</a></li>
+    <li><a href="#radiusy">Rádiusy</a></li>
+    <li><a href="#elevace">Elevace</a></li>
+    <li><a href="#pohyb">Pohyb</a></li>
+    <li><a href="#tlacitka">Tlačítka</a></li>
+    <li><a href="#karty">Karty</a></li>
+    <li><a href="#formulare">Formuláře</a></li>
+    <li><a href="#sklo">Sklo</a></li>
+    <li><a href="#ikony">Ikony</a></li>
+  </ul></div>
+</nav>
+
+<main id="ds">
+
+<section class="ds-sec" id="barvy">
+  <div class="container">
+    <h2>Barvy</h2>
+    <p class="lead">Primitivy se nikdy nemění — mění se jen jejich sémantické přiřazení.
+      Proto tmavý blok stačí označit <code>[data-theme="dark"]</code> a vše ostatní drží.</p>
+
+    <h3 style="margin-bottom:var(--sp-4)">Značka</h3>
+    <div class="ds-grid" style="margin-bottom:var(--sp-10)">
+      <div class="sw"><div class="sw__chip" style="background:var(--c-ink)"></div>
+        <div class="sw__meta"><span class="ds-name">Ink</span><span class="ds-label">--c-ink · #0e1020</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--c-coral)"></div>
+        <div class="sw__meta"><span class="ds-name">Coral</span><span class="ds-label">--c-coral · #ff5c3e</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--c-mango)"></div>
+        <div class="sw__meta"><span class="ds-name">Mango</span><span class="ds-label">--c-mango · #ff9e2c</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--c-aqua)"></div>
+        <div class="sw__meta"><span class="ds-name">Aqua</span><span class="ds-label">--c-aqua · #19c9e8</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--c-grape)"></div>
+        <div class="sw__meta"><span class="ds-name">Grape</span><span class="ds-label">--c-grape · #7c5cff</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--c-lime)"></div>
+        <div class="sw__meta"><span class="ds-name">Lime</span><span class="ds-label">--c-lime · #8be86b</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--c-cream)"></div>
+        <div class="sw__meta"><span class="ds-name">Cream</span><span class="ds-label">--c-cream · #fff7ef</span></div></div>
+    </div>
+
+    <h3 style="margin-bottom:var(--sp-4)">Stavy</h3>
+    <div class="ds-row">
+      <span class="badge badge--ok"><span class="badge__dot"></span>Volno</span>
+      <span class="badge badge--warn"><span class="badge__dot"></span>Poslední kusy</span>
+      <span class="badge badge--busy"><span class="badge__dot"></span>Obsazeno</span>
+      <span class="badge badge--info"><span class="badge__dot"></span>Informace</span>
+      <span class="badge badge--brand">Novinka</span>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="gradienty">
+  <div class="container">
+    <h2>Gradienty</h2>
+    <p class="lead">Podpis značky. <code>--grad-sunset</code> je vyhrazený primární akci —
+      objeví se tam, kde chceme, aby uživatel klikl.</p>
+    <div class="ds-grid">
+      <div class="sw"><div class="sw__chip" style="background:var(--grad-sunset)"></div>
+        <div class="sw__meta"><span class="ds-name">Sunset</span><span class="ds-label">--grad-sunset</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--grad-splash)"></div>
+        <div class="sw__meta"><span class="ds-name">Splash</span><span class="ds-label">--grad-splash</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--grad-meadow)"></div>
+        <div class="sw__meta"><span class="ds-name">Meadow</span><span class="ds-label">--grad-meadow</span></div></div>
+      <div class="sw"><div class="sw__chip" style="background:var(--grad-candy)"></div>
+        <div class="sw__meta"><span class="ds-name">Candy</span><span class="ds-label">--grad-candy</span></div></div>
+    </div>
+    <p style="margin-top:var(--sp-8);font-size:var(--fs-3xl);font-family:var(--font-display);font-weight:800;letter-spacing:var(--tracking-tight)"
+       class="text-gradient">Gradientní text — .text-gradient</p>
+  </div>
+</section>
+
+<section class="ds-sec" id="typografie">
+  <div class="container">
+    <h2>Typografie</h2>
+    <p class="lead">Outfit pro nadpisy a čísla, Inter pro text. Obě plynule škálují mezi
+      360 px a 1440 px, takže mezi breakpointy nikdy neskáčou.</p>
+    <div class="ds-panel">
+      <div class="type-row"><span class="ds-label">--fs-hero · Outfit 800 · 44→100px</span>
+        <span style="font-family:var(--font-display);font-size:var(--fs-hero);font-weight:800;line-height:1.04;letter-spacing:var(--tracking-tighter)">Dětská oslava</span></div>
+      <div class="type-row"><span class="ds-label">--fs-3xl · Outfit 700 · 32→52px</span>
+        <span style="font-family:var(--font-display);font-size:var(--fs-3xl);font-weight:700;letter-spacing:var(--tracking-tight)">Nadpis sekce</span></div>
+      <div class="type-row"><span class="ds-label">--fs-xl · Outfit 700 · 22→28px</span>
+        <span style="font-family:var(--font-display);font-size:var(--fs-xl);font-weight:700;letter-spacing:var(--tracking-tight)">Nadpis karty</span></div>
+      <div class="type-row"><span class="ds-label">--fs-lg · Inter 400 · 18→22px</span>
+        <span style="font-size:var(--fs-lg);color:var(--text-muted);line-height:var(--lh-relaxed)">Perex — příšerně žluťoučký kůň úpěl ďábelské ódy.</span></div>
+      <div class="type-row"><span class="ds-label">--fs-base · Inter 400 · 15→16px</span>
+        <span>Běžný text. Příliš žluťoučký kůň úpěl ďábelské ódy — 0123456789.</span></div>
+      <div class="type-row"><span class="ds-label">--fs-sm · Inter 400 · 13px</span>
+        <span style="font-size:var(--fs-sm);color:var(--text-muted)">Doplňková informace, popisky polí, meta údaje.</span></div>
+      <div class="type-row"><span class="ds-label">.eyebrow · Inter 600 · 12px</span>
+        <span class="eyebrow">Nadřazený popisek</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="prostor">
+  <div class="container">
+    <h2>Prostor</h2>
+    <p class="lead">Základ 4 px. Mezi sekcemi <code>--section-y</code> (72→144 px).</p>
+    <div class="ds-panel" style="display:grid;gap:var(--sp-4)">
+      <div><span class="ds-label">--sp-2 · 8px</span><div class="space-bar" style="width:8px"></div></div>
+      <div><span class="ds-label">--sp-4 · 16px</span><div class="space-bar" style="width:16px"></div></div>
+      <div><span class="ds-label">--sp-6 · 24px</span><div class="space-bar" style="width:24px"></div></div>
+      <div><span class="ds-label">--sp-8 · 32px</span><div class="space-bar" style="width:32px"></div></div>
+      <div><span class="ds-label">--sp-12 · 48px</span><div class="space-bar" style="width:48px"></div></div>
+      <div><span class="ds-label">--sp-16 · 64px</span><div class="space-bar" style="width:64px"></div></div>
+      <div><span class="ds-label">--sp-24 · 96px</span><div class="space-bar" style="width:96px"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="radiusy">
+  <div class="container">
+    <h2>Rádiusy</h2>
+    <p class="lead">Štědré a měkké — tvarosloví značky je „skákavé". Ostré rohy web nepoužívá.</p>
+    <div class="ds-grid">
+      <div><div class="radius-demo" style="border-radius:var(--r-sm)"></div><p class="ds-label" style="margin-top:var(--sp-2)">--r-sm · 10px</p></div>
+      <div><div class="radius-demo" style="border-radius:var(--r-md)"></div><p class="ds-label" style="margin-top:var(--sp-2)">--r-md · 14px</p></div>
+      <div><div class="radius-demo" style="border-radius:var(--r-lg)"></div><p class="ds-label" style="margin-top:var(--sp-2)">--r-lg · 20px</p></div>
+      <div><div class="radius-demo" style="border-radius:var(--r-xl)"></div><p class="ds-label" style="margin-top:var(--sp-2)">--r-xl · 28px</p></div>
+      <div><div class="radius-demo" style="border-radius:var(--r-2xl)"></div><p class="ds-label" style="margin-top:var(--sp-2)">--r-2xl · 36px</p></div>
+      <div><div class="radius-demo" style="border-radius:var(--r-pill)"></div><p class="ds-label" style="margin-top:var(--sp-2)">--r-pill</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="elevace">
+  <div class="container">
+    <h2>Elevace</h2>
+    <p class="lead">Stíny jsou teple tónované, nikdy neutrálně šedé — šedá působí lacině.</p>
+    <div class="ds-grid">
+      <div><div class="shadow-demo" style="box-shadow:var(--sh-sm)"></div><p class="ds-label" style="margin-top:var(--sp-3)">--sh-sm</p></div>
+      <div><div class="shadow-demo" style="box-shadow:var(--sh-md)"></div><p class="ds-label" style="margin-top:var(--sp-3)">--sh-md</p></div>
+      <div><div class="shadow-demo" style="box-shadow:var(--sh-lg)"></div><p class="ds-label" style="margin-top:var(--sp-3)">--sh-lg</p></div>
+      <div><div class="shadow-demo" style="box-shadow:var(--sh-xl)"></div><p class="ds-label" style="margin-top:var(--sp-3)">--sh-xl</p></div>
+      <div><div class="shadow-demo" style="box-shadow:var(--sh-glow-warm)"></div><p class="ds-label" style="margin-top:var(--sp-3)">--sh-glow-warm</p></div>
+      <div><div class="shadow-demo" style="box-shadow:var(--sh-glow-cool)"></div><p class="ds-label" style="margin-top:var(--sp-3)">--sh-glow-cool</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="pohyb">
+  <div class="container">
+    <h2>Pohyb</h2>
+    <p class="lead">Najeďte myší. <code>prefers-reduced-motion</code> přepíše všechny doby
+      na 1 ms — každá animace je psaná tak, že její odebrání nechá správný koncový stav.</p>
+    <div class="ds-grid">
+      <div class="ds-panel"><div class="motion-demo" style="transition:transform var(--dur-fast) var(--ease-out)"
+             onmouseover="this.style.transform='translateX(90px)'" onmouseout="this.style.transform=''"></div>
+        <p class="ds-name" style="margin-top:var(--sp-4)">--dur-fast · --ease-out</p>
+        <p class="ds-label">160 ms · expo, „Apple"</p></div>
+      <div class="ds-panel"><div class="motion-demo" style="transition:transform var(--dur-base) var(--ease-spring)"
+             onmouseover="this.style.transform='translateX(90px)'" onmouseout="this.style.transform=''"></div>
+        <p class="ds-name" style="margin-top:var(--sp-4)">--dur-base · --ease-spring</p>
+        <p class="ds-label">240 ms · přestřel, hravé</p></div>
+      <div class="ds-panel"><div class="motion-demo" style="transition:transform var(--dur-slow) var(--ease-soft)"
+             onmouseover="this.style.transform='translateX(90px)'" onmouseout="this.style.transform=''"></div>
+        <p class="ds-name" style="margin-top:var(--sp-4)">--dur-slow · --ease-soft</p>
+        <p class="ds-label">420 ms · plynulé</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="tlacitka">
+  <div class="container">
+    <h2>Tlačítka</h2>
+    <p class="lead">Na obrazovce je vždy nejvýš jedna primární akce.
+      <code>.btn--primary</code> je vyhrazené rezervaci.</p>
+    <div class="ds-row" style="margin-bottom:var(--sp-6)">
+      <button class="btn btn--primary">Rezervovat termín
+        <svg class="icon btn__arrow" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+      <button class="btn btn--secondary">Sekundární</button>
+      <button class="btn btn--ink">Ink</button>
+      <button class="btn btn--ghost">Ghost</button>
+      <button class="btn btn--secondary" disabled>Neaktivní</button>
+    </div>
+    <div class="ds-row" style="margin-bottom:var(--sp-6)">
+      <button class="btn btn--primary btn--lg">Velké</button>
+      <button class="btn btn--secondary">Základní</button>
+      <button class="btn btn--secondary btn--sm">Malé</button>
+      <button class="btn btn--secondary btn--icon"><span class="visually-hidden">Ikona</span>
+        <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg></button>
+    </div>
+    <div class="glass-stage ds-row">
+      <button class="btn btn--glass">Glass — na fotografii</button>
+      <button class="btn btn--glass btn--lg">Glass velké</button>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="karty">
+  <div class="container">
+    <h2>Karty</h2>
+    <p class="lead">Celá karta je klikatelná, ale odkaz je jen jeden — čtečka ohlásí
+      jeden cíl, ne pět.</p>
+    <div class="grid grid--auto" style="--min-col:270px">
+      <article class="card card--interactive">
+        <div class="card__media"><img src="/assets/img/art/hrad-kralovsky-640.webp" width="640" height="480" loading="lazy" alt=""></div>
+        <div class="card__body">
+          <h3 class="card__title">.card--interactive</h3>
+          <p class="card__text">Zvedne se při najetí, obrázek se lehce přiblíží.</p>
+        </div>
+        <div class="card__footer">
+          <p class="price"><span class="price__num">2 900</span> <span class="price__unit">Kč / den</span></p>
+        </div>
+      </article>
+      <article class="card card--interactive card--spotlight" data-spot>
+        <div class="card__body" style="padding:var(--sp-7)">
+          <span class="icon-tile"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-castle"/></svg></span>
+          <h3 class="card__title" style="margin-top:var(--sp-4)">.card--spotlight</h3>
+          <p class="card__text">Světlo sleduje ukazatel myši.</p>
+        </div>
+      </article>
+      <article class="card card--ink">
+        <div class="card__body" style="padding:var(--sp-7)">
+          <span class="icon-tile icon-tile--splash"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-shield"/></svg></span>
+          <h3 class="card__title" style="margin-top:var(--sp-4)">.card--ink</h3>
+          <p class="card__text">Inverzní karta — přerušuje dlouhé světlé úseky.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="formulare">
+  <div class="container">
+    <h2>Formuláře</h2>
+    <p class="lead">Chyba se pojmenuje česky a konkrétně — nikdy „Neplatná hodnota".</p>
+    <div class="ds-panel" style="max-width:44rem">
+      <div class="booking__grid">
+        <div class="field field--span-2">
+          <label class="label" for="d1">Jméno a příjmení <span class="label__req">*</span></label>
+          <input class="input" id="d1" type="text" placeholder="Petra Nováková">
+        </div>
+        <div class="field">
+          <label class="label" for="d2">Datum akce</label>
+          <input class="input" id="d2" type="date">
+        </div>
+        <div class="field">
+          <label class="label" for="d3">Povrch</label>
+          <select class="select" id="d3"><option>Trávník</option><option>Dlažba nebo beton</option></select>
+        </div>
+        <div class="field field--span-2">
+          <label class="label" for="d4">Telefon <span class="label__req">*</span></label>
+          <input class="input" id="d4" type="tel" value="+420 73" aria-invalid="true" aria-describedby="d4e">
+          <p class="field__error" id="d4e">Telefon vypadá na příliš krátký.</p>
+        </div>
+        <div class="field field--span-2">
+          <label class="label" for="d5">Poznámka <span class="label__hint">nepovinné</span></label>
+          <textarea class="textarea" id="d5" placeholder="Úzká branka, svah, oslava v podvečer…"></textarea>
+        </div>
+        <label class="check field--span-2"><input type="checkbox" checked>
+          <span>Mám k dispozici zásuvku 230 V do 25 metrů od místa stavby.</span></label>
+      </div>
+
+      <h3 style="margin:var(--sp-8) 0 var(--sp-4);font-size:var(--fs-lg)">.option-card</h3>
+      <div style="display:grid;gap:var(--sp-2)">
+        <label class="option-card"><input type="checkbox" checked>
+          <span class="option-card__figure"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-castle"/></svg></span>
+          <span class="option-card__main"><span class="option-card__name">Královský hrad</span>
+            <span class="option-card__meta">4,5 × 4,0 m · 3–12 let</span></span>
+          <span class="option-card__price">2 900 Kč</span>
+          <span class="option-card__check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+        <label class="option-card"><input type="checkbox">
+          <span class="option-card__figure"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-droplet"/></svg></span>
+          <span class="option-card__main"><span class="option-card__name">Aqua Rush</span>
+            <span class="option-card__meta">9,0 × 4,0 m · 5–14 let</span></span>
+          <span class="option-card__price">3 900 Kč</span>
+          <span class="option-card__check"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec ds-sec--dark" id="sklo">
+  <div class="container">
+    <h2>Sklo</h2>
+    <p class="lead" style="color:rgb(255 247 239 / .7)">Jeden recept, jeden token. Kde
+      prohlížeč <code>backdrop-filter</code> neumí, <code>@supports</code> degraduje na
+      neprůhledné pozadí — text nikdy nezůstane nečitelný.</p>
+    <div class="glass-stage">
+      <div class="grid grid--auto" style="--min-col:230px">
+        <div class="glass" style="padding:var(--sp-6)">
+          <p class="ds-name">.glass</p>
+          <p class="ds-label">Světlé sklo na barevném podkladu</p>
+        </div>
+        <div class="glass glass--dark" style="padding:var(--sp-6)">
+          <p class="ds-name" style="color:var(--c-cream)">.glass--dark</p>
+          <p class="ds-label" style="color:rgb(255 247 239 / .6)">Tmavé sklo</p>
+        </div>
+        <div class="card card--glass" style="padding:var(--sp-6)">
+          <p class="ds-name">.card--glass</p>
+          <p class="ds-label">Skleněná karta</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ds-sec" id="ikony">
+  <div class="container">
+    <h2>Ikony</h2>
+    <p class="lead">Vlastní sada, mřížka 24 × 24, tah 1,75, zakulacené konce.
+      Kompletní sada je v <code>assets/icons/sprite.svg</code> (41 ikon).
+      Ikona nikdy nenese význam sama — vždy má vedle sebe text nebo
+      <code>aria-label</code>.</p>
+    <div class="ds-row">
+      <span class="icon-tile"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-castle"/></svg></span>
+      <span class="icon-tile icon-tile--splash"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-droplet"/></svg></span>
+      <span class="icon-tile icon-tile--meadow"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-shield"/></svg></span>
+      <span class="icon-tile icon-tile--candy"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-phone"/></svg></span>
+      <span class="icon-tile icon-tile--soft"><svg class="icon icon--lg" aria-hidden="true"><use href="#i-check"/></svg></span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer" style="padding-block:var(--sp-12)">
+  <div class="container">
+    <p style="font-size:var(--fs-sm)">HOPLA — designový systém ·
+      <a href="/" style="color:var(--c-mango)">zpět na web</a> ·
+      dokumentace v <code>docs/DESIGN-SYSTEM.md</code></p>
+  </div>
+</footer>
+
+<script>
+  // The spotlight card needs the same pointer wiring the product page uses.
+  const card = document.querySelector('[data-spot]');
+  card?.addEventListener('pointermove', (e) => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
+    card.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
+  });
+</script>
+</body>
+</html>

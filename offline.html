@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jste offline — HOPLA</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/assets/img/logo-mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/hopla.css">
+<style>
+  body { display: grid; place-items: center; min-height: 100svh; padding: var(--sp-6); }
+  .offline { display: grid; gap: var(--sp-5); justify-items: center; text-align: center; max-width: 34rem; }
+  .offline__mark { width: 4.5rem; height: 4.5rem; }
+  .offline h1 { font-size: var(--fs-3xl); }
+  .offline p { color: var(--text-muted); line-height: var(--lh-relaxed); }
+</style>
+</head>
+<body>
+  <main class="offline">
+    <svg class="offline__mark" viewBox="0 0 48 48" role="img" aria-label="HOPLA">
+      <defs>
+        <linearGradient id="a" x1="7" y1="6" x2="41" y2="44" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#ff5c3e"/><stop offset="1" stop-color="#ff9e2c"/>
+        </linearGradient>
+        <linearGradient id="b" x1="19" y1="20" x2="30" y2="32" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#19c9e8"/><stop offset="1" stop-color="#7c5cff"/>
+        </linearGradient>
+      </defs>
+      <path d="M9.6 40.4V24a14.4 14.4 0 0 1 28.8 0v16.4" fill="none"
+            stroke="url(#a)" stroke-width="9.2" stroke-linecap="round"/>
+      <circle cx="24" cy="25.6" r="5.1" fill="url(#b)"/>
+    </svg>
+
+    <h1>Vypadá to na výpadek připojení.</h1>
+    <p>Stránku načteme, jakmile budete zase online. Pokud spěcháte s termínem,
+      zavolejte nám — telefon funguje i bez internetu.</p>
+
+    <div class="cluster" style="justify-content:center">
+      <a class="btn btn--primary" href="tel:+420730111222">Zavolat 730 111 222</a>
+      <button class="btn btn--secondary" type="button" onclick="location.reload()">Zkusit znovu</button>
+    </div>
+  </main>
+</body>
+</html>

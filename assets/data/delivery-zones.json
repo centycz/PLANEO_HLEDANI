@@ -1,0 +1,44 @@
+{
+  "$comment": "Delivery pricing by distance from the depot. `towns` drives the postcode/town lookup in the booking form and the map legend.",
+  "version": "2026-08-01",
+  "currency": "CZK",
+  "depot": { "label": "Brno-Slatina", "lat": 49.1789, "lon": 16.6742 },
+  "zones": [
+    {
+      "id": "z1",
+      "label": "Zóna 1",
+      "radiusKm": 15,
+      "fee": 0,
+      "feeLabel": "Zdarma",
+      "colour": "#8be86b",
+      "towns": ["Brno", "Šlapanice", "Modřice", "Kuřim", "Bílovice nad Svitavou", "Ostopovice", "Želešice"]
+    },
+    {
+      "id": "z2",
+      "label": "Zóna 2",
+      "radiusKm": 30,
+      "fee": 400,
+      "feeLabel": "400 Kč",
+      "colour": "#19c9e8",
+      "towns": ["Blansko", "Vyškov", "Židlochovice", "Rosice", "Tišnov", "Pohořelice", "Slavkov u Brna"]
+    },
+    {
+      "id": "z3",
+      "label": "Zóna 3",
+      "radiusKm": 60,
+      "fee": 800,
+      "feeLabel": "800 Kč",
+      "colour": "#ff9e2c",
+      "towns": ["Znojmo", "Břeclav", "Hodonín", "Kyjov", "Boskovice", "Mikulov", "Bučovice", "Moravský Krumlov"]
+    },
+    {
+      "id": "z4",
+      "label": "Zóna 4",
+      "radiusKm": 120,
+      "fee": null,
+      "feeLabel": "Dle domluvy",
+      "colour": "#7c5cff",
+      "towns": ["Jihlava", "Třebíč", "Uherské Hradiště", "Zlín", "Olomouc", "Prostějov"]
+    }
+  ]
+}

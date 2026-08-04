@@ -1,0 +1,270 @@
+/* ============================================================================
+   HOPLA — Design tokens
+   The single source of truth for the visual language.
+   Nothing in the codebase may hard-code a colour, radius, shadow or duration.
+   ========================================================================= */
+
+/* ---------- Self-hosted variable fonts (subset: latin + latin-ext) ------- */
+@font-face {
+  font-family: 'Outfit';
+  src: url('../fonts/outfit-var.woff2') format('woff2-variations');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0100-017F, U+2000-206F, U+20AC, U+2190-2193, U+2212;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('../fonts/inter-var.woff2') format('woff2-variations');
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0100-017F, U+2000-206F, U+20AC, U+2190-2193, U+2212;
+}
+
+:root {
+  /* ======================================================================
+     1. COLOUR — "Letní odpoledne" (a summer afternoon)
+     Brand hues are stored as raw H S L channels so any token can be
+     re-mixed at any opacity without a second variable.
+     ================================================================== */
+
+  /* Brand primitives */
+  --c-ink:        #0e1020;   /* deep indigo-black — the premium anchor      */
+  --c-ink-soft:   #191c34;
+  --c-mango:      #ff9e2c;   /* sunlight, laughter, the "yes" colour        */
+  --c-coral:      #ff5c3e;   /* excitement — reserved for primary action    */
+  --c-aqua:       #19c9e8;   /* water slide, refreshment                    */
+  --c-grape:      #7c5cff;   /* wonder, evening magic                       */
+  --c-lime:       #8be86b;   /* grass, safety, the outdoors                 */
+  --c-cream:      #fff7ef;   /* warm paper — the default light surface      */
+  --c-sand:       #f5ece1;
+
+  /* Channel triplets (for colour-mix-free alpha compositing) */
+  --rgb-ink:    14 16 32;
+  --rgb-mango:  255 158 44;
+  --rgb-coral:  255 92 62;
+  --rgb-aqua:   25 201 232;
+  --rgb-grape:  124 92 255;
+  --rgb-lime:   139 232 107;
+  --rgb-cream:  255 247 239;
+  --rgb-white:  255 255 255;
+
+  /* Warm-tinted neutral ramp (never pure grey — greys read cheap) */
+  --n-0:   #ffffff;
+  --n-25:  #fffdfb;
+  --n-50:  #fbf7f3;
+  --n-100: #f4eee8;
+  --n-200: #e7ded5;
+  --n-300: #d2c6ba;
+  --n-400: #a99b8e;
+  --n-500: #7d7268;
+  --n-600: #5b524b;
+  --n-700: #403933;
+  --n-800: #2a2521;
+  --n-900: #17140f;
+
+  /* Semantic surfaces */
+  --surface-page:      var(--c-cream);
+  --surface-raised:    var(--n-0);
+  --surface-sunken:    var(--n-50);
+  --surface-inverse:   var(--c-ink);
+  --surface-veil:      rgb(var(--rgb-ink) / 0.55);
+
+  /* Semantic text */
+  --text-strong:   var(--c-ink);
+  --text-body:     #40414f;
+  --text-muted:    #6f7183;
+  --text-faint:    #9a9cad;
+  --text-on-dark:  var(--c-cream);
+  --text-on-dark-muted: rgb(var(--rgb-cream) / 0.66);
+  --text-on-brand: #2a1200;
+
+  /* Semantic borders */
+  --border-subtle:  rgb(var(--rgb-ink) / 0.07);
+  --border-default: rgb(var(--rgb-ink) / 0.12);
+  --border-strong:  rgb(var(--rgb-ink) / 0.22);
+  --border-on-dark: rgb(var(--rgb-cream) / 0.14);
+
+  /* Status */
+  --status-ok:     #1fae5f;
+  --status-ok-bg:  #e6f8ee;
+  --status-warn:   #e08600;
+  --status-warn-bg:#fdf1dd;
+  --status-busy:   #e0463a;
+  --status-busy-bg:#fdeae8;
+  --status-info:   #0f9fbb;
+  --status-info-bg:#e2f7fb;
+
+  /* ---------------------- Gradients (the brand's signature) ------------- */
+  --grad-sunset:  linear-gradient(135deg, #ff5c3e 0%, #ff9e2c 100%);
+  --grad-splash:  linear-gradient(135deg, #19c9e8 0%, #7c5cff 100%);
+  --grad-meadow:  linear-gradient(135deg, #8be86b 0%, #19c9e8 100%);
+  --grad-candy:   linear-gradient(135deg, #7c5cff 0%, #ff5c3e 100%);
+  --grad-dusk:    linear-gradient(180deg, rgb(14 16 32 / 0) 0%, rgb(14 16 32 / 0.72) 62%, rgb(14 16 32 / 0.94) 100%);
+  --grad-text:    linear-gradient(103deg, #ff9e2c 0%, #ff5c3e 46%, #7c5cff 100%);
+
+  /* Ambient mesh used behind large sections */
+  --mesh-warm:
+    radial-gradient(58% 62% at 12% 8%,  rgb(var(--rgb-mango) / 0.20) 0%, transparent 62%),
+    radial-gradient(48% 54% at 92% 22%, rgb(var(--rgb-coral) / 0.16) 0%, transparent 60%),
+    radial-gradient(62% 68% at 74% 96%, rgb(var(--rgb-grape) / 0.13) 0%, transparent 64%);
+  --mesh-cool:
+    radial-gradient(56% 60% at 88% 6%,  rgb(var(--rgb-aqua)  / 0.22) 0%, transparent 62%),
+    radial-gradient(52% 58% at 6%  74%, rgb(var(--rgb-grape) / 0.18) 0%, transparent 60%);
+
+  /* ======================================================================
+     2. TYPOGRAPHY
+     Fluid scale, clamped between a 360px and a 1440px viewport.
+     ================================================================== */
+  --font-display: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-text:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    ui-monospace, 'SFMono-Regular', 'Cascadia Code', monospace;
+
+  --fs-2xs:  0.6875rem;                                  /* 11 — micro labels */
+  --fs-xs:   0.75rem;                                    /* 12 — captions     */
+  --fs-sm:   0.8125rem;                                  /* 13 — meta         */
+  --fs-base: clamp(0.9375rem, 0.90rem + 0.16vw, 1rem);   /* 15→16 body        */
+  --fs-md:   clamp(1rem,     0.95rem + 0.24vw, 1.125rem);/* 16→18 lead-in     */
+  --fs-lg:   clamp(1.125rem, 1.04rem + 0.38vw, 1.375rem);/* 18→22 sub-lead    */
+  --fs-xl:   clamp(1.375rem, 1.24rem + 0.60vw, 1.75rem); /* 22→28 card title  */
+  --fs-2xl:  clamp(1.625rem, 1.38rem + 1.10vw, 2.375rem);/* 26→38 section h3  */
+  --fs-3xl:  clamp(2rem,     1.58rem + 1.85vw, 3.25rem); /* 32→52 section h2  */
+  --fs-4xl:  clamp(2.5rem,   1.72rem + 3.45vw, 4.5rem);  /* 40→72 statement   */
+  --fs-hero: clamp(2.75rem,  1.60rem + 5.10vw, 6.25rem); /* 44→100 hero h1    */
+
+  --lh-tight:   1.04;
+  --lh-snug:    1.16;
+  --lh-heading: 1.24;
+  --lh-normal:  1.55;
+  --lh-relaxed: 1.72;
+
+  --tracking-tighter: -0.045em;
+  --tracking-tight:   -0.028em;
+  --tracking-snug:    -0.014em;
+  --tracking-normal:  0em;
+  --tracking-wide:    0.06em;
+  --tracking-widest:  0.16em;
+
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+  --fw-black:   800;
+
+  /* ======================================================================
+     3. SPACE — 4px base
+     ================================================================== */
+  --sp-1:  0.25rem;  --sp-2:  0.5rem;   --sp-3:  0.75rem;  --sp-4:  1rem;
+  --sp-5:  1.25rem;  --sp-6:  1.5rem;   --sp-7:  1.75rem;  --sp-8:  2rem;
+  --sp-10: 2.5rem;   --sp-12: 3rem;     --sp-14: 3.5rem;   --sp-16: 4rem;
+  --sp-20: 5rem;     --sp-24: 6rem;     --sp-32: 8rem;     --sp-40: 10rem;
+
+  /* Vertical rhythm between full-width sections */
+  --section-y:    clamp(4.5rem, 3.2rem + 5.6vw, 9rem);
+  --section-y-sm: clamp(3rem,   2.3rem + 3.0vw, 5.5rem);
+
+  /* ======================================================================
+     4. LAYOUT
+     ================================================================== */
+  --container:      1240px;
+  --container-wide: 1440px;
+  --container-text: 68ch;
+  --gutter: clamp(1.125rem, 0.72rem + 1.8vw, 2.5rem);
+  --header-h: 72px;
+
+  /* ======================================================================
+     5. RADII — generous and soft; the shape language is "bouncy"
+     ================================================================== */
+  --r-xs:   6px;   --r-sm:  10px;  --r-md:  14px;  --r-lg:  20px;
+  --r-xl:   28px;  --r-2xl: 36px;  --r-3xl: 48px;  --r-pill: 999px;
+
+  /* ======================================================================
+     6. ELEVATION — warm-tinted, never neutral grey
+     ================================================================== */
+  --sh-xs: 0 1px 2px rgb(var(--rgb-ink) / 0.05);
+  --sh-sm: 0 1px 2px rgb(var(--rgb-ink) / 0.05), 0 2px 6px rgb(var(--rgb-ink) / 0.05);
+  --sh-md: 0 2px 4px rgb(var(--rgb-ink) / 0.04), 0 8px 20px rgb(var(--rgb-ink) / 0.07);
+  --sh-lg: 0 4px 10px rgb(var(--rgb-ink) / 0.05), 0 18px 40px rgb(var(--rgb-ink) / 0.09);
+  --sh-xl: 0 8px 20px rgb(var(--rgb-ink) / 0.07), 0 32px 68px rgb(var(--rgb-ink) / 0.13);
+  --sh-2xl:0 16px 36px rgb(var(--rgb-ink) / 0.09), 0 56px 110px rgb(var(--rgb-ink) / 0.18);
+  --sh-glow-warm: 0 10px 30px rgb(var(--rgb-coral) / 0.32);
+  --sh-glow-cool: 0 10px 30px rgb(var(--rgb-aqua)  / 0.30);
+  --sh-inset-top: inset 0 1px 0 rgb(var(--rgb-white) / 0.6);
+
+  /* ======================================================================
+     7. GLASS — the glassmorphism recipe, tokenised so it stays consistent
+     ================================================================== */
+  --glass-bg:        rgb(var(--rgb-white) / 0.62);
+  --glass-bg-strong: rgb(var(--rgb-white) / 0.82);
+  --glass-border:    rgb(var(--rgb-white) / 0.55);
+  --glass-blur:      saturate(180%) blur(20px);
+  --glass-dark-bg:     rgb(var(--rgb-ink) / 0.42);
+  --glass-dark-border: rgb(var(--rgb-cream) / 0.16);
+  --glass-dark-blur:   saturate(150%) blur(18px);
+
+  /* ======================================================================
+     8. MOTION
+     ================================================================== */
+  --dur-instant: 90ms;
+  --dur-fast:    160ms;
+  --dur-base:    240ms;
+  --dur-slow:    420ms;
+  --dur-slower:  680ms;
+  --dur-reveal:  900ms;
+
+  --ease-out:    cubic-bezier(0.16, 1, 0.30, 1);      /* expo-out, "Apple"  */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);   /* overshoot, playful */
+  --ease-soft:   cubic-bezier(0.32, 0.72, 0, 1);      /* Vercel-ish glide   */
+
+  /* ======================================================================
+     9. Z-INDEX — a single ordered ladder, no magic numbers elsewhere
+     ================================================================== */
+  --z-behind: -1;
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-drawer: 300;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-toast: 600;
+
+  /* Focus ring — one definition, used everywhere */
+  --focus-ring: 0 0 0 3px rgb(var(--rgb-white) / 0.9), 0 0 0 6px rgb(var(--rgb-grape) / 0.75);
+  --focus-ring-dark: 0 0 0 3px rgb(var(--rgb-ink) / 0.9), 0 0 0 6px rgb(var(--rgb-mango) / 0.85);
+}
+
+/* ---------------------------------------------------------------------------
+   Dark surfaces: any block marked [data-theme="dark"] re-points the semantic
+   tokens. Primitives never change — only their semantic assignment does.
+   ------------------------------------------------------------------------ */
+[data-theme='dark'] {
+  --surface-page:    var(--c-ink);
+  --surface-raised:  #171a30;
+  --surface-sunken:  #0a0c18;
+  --surface-inverse: var(--c-cream);
+  --text-strong:  var(--c-cream);
+  --text-body:    rgb(var(--rgb-cream) / 0.80);
+  --text-muted:   rgb(var(--rgb-cream) / 0.60);
+  --text-faint:   rgb(var(--rgb-cream) / 0.40);
+  --border-subtle:  rgb(var(--rgb-cream) / 0.08);
+  --border-default: rgb(var(--rgb-cream) / 0.14);
+  --border-strong:  rgb(var(--rgb-cream) / 0.26);
+  --glass-bg:        rgb(var(--rgb-cream) / 0.07);
+  --glass-bg-strong: rgb(var(--rgb-cream) / 0.12);
+  --glass-border:    rgb(var(--rgb-cream) / 0.16);
+  --focus-ring: var(--focus-ring-dark);
+}
+
+/* ---------------------------------------------------------------------------
+   Motion preference. Everything animated in this codebase is written so that
+   removing the transition leaves a correct, fully visible end state.
+   ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 1ms; --dur-fast: 1ms; --dur-base: 1ms;
+    --dur-slow: 1ms; --dur-slower: 1ms; --dur-reveal: 1ms;
+  }
+}

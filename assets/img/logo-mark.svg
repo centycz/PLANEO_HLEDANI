@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="HOPLA">
+  <title>HOPLA</title>
+  <defs>
+    <linearGradient id="hoplaArch" x1="7" y1="6" x2="41" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff5c3e"/>
+      <stop offset="1" stop-color="#ff9e2c"/>
+    </linearGradient>
+    <linearGradient id="hoplaDot" x1="19" y1="20" x2="30" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#19c9e8"/>
+      <stop offset="1" stop-color="#7c5cff"/>
+    </linearGradient>
+  </defs>
+  <!-- The arch: an inflatable entrance, drawn as one confident stroke -->
+  <path d="M9.6 40.4V24a14.4 14.4 0 0 1 28.8 0v16.4"
+        fill="none" stroke="url(#hoplaArch)" stroke-width="9.2" stroke-linecap="round"/>
+  <!-- The hop: a child suspended mid-bounce inside the arch -->
+  <circle cx="24" cy="25.6" r="5.1" fill="url(#hoplaDot)"/>
+</svg>

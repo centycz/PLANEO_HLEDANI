@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<!--
+  HOPLA icon system
+  Grid 24×24 · stroke 1.75 · round caps & joins · 2px optical padding
+  Geometry mirrors the brand's shape language: arches, circles, soft corners.
+  All icons inherit `stroke: currentColor` from the .icon class.
+-->
+
+<!-- ─── Navigation & UI ─────────────────────────────────────────────── -->
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M3.5 7h17M3.5 12h17M3.5 17h11"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+<symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6"/></symbol>
+<symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
+<symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h15.5m0 0-6-6m6 6-6 6"/></symbol>
+<symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7m0 0H8.5M17 7v8.5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.4-4.4"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8.5 5.6a1 1 0 0 1 1.52-.85l8.1 5.4a1.2 1.2 0 0 1 0 2l-8.1 5.4a1 1 0 0 1-1.52-.85z"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11.2v5.2M12 8.1h.01"/></symbol>
+<symbol id="i-external" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M18 14.5V18a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.5"/></symbol>
+<symbol id="i-quote" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M9.4 5.2c-3.3 1.4-5.4 4.4-5.4 8.2 0 3.3 1.9 5.4 4.5 5.4 2.2 0 3.9-1.6 3.9-3.7 0-2-1.4-3.5-3.3-3.5-.4 0-.8.1-1 .1.4-1.7 1.8-3.2 3.6-4zm10 0c-3.3 1.4-5.4 4.4-5.4 8.2 0 3.3 1.9 5.4 4.5 5.4 2.2 0 3.9-1.6 3.9-3.7 0-2-1.4-3.5-3.3-3.5-.4 0-.8.1-1 .1.4-1.7 1.8-3.2 3.6-4z"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6.5h16M7 12h10M10 17.5h4"/></symbol>
+
+<!-- ─── Contact ─────────────────────────────────────────────────────── -->
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.3 3.8h2.9l1.5 3.7-1.9 1.2a11.6 11.6 0 0 0 5 5l1.2-1.9 3.7 1.5v2.9a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.3 6a2 2 0 0 1 2-2.2z"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.6"/><path d="m3.8 7.6 7.1 4.7a2 2 0 0 0 2.2 0l7.1-4.7"/></symbol>
+<symbol id="i-message" viewBox="0 0 24 24"><path d="M20.5 11.6c0 4-3.8 7.2-8.5 7.2a9.8 9.8 0 0 1-2.5-.32L4.2 20.2l1.2-3.6a6.9 6.9 0 0 1-2-4.9c0-4 3.8-7.2 8.6-7.2s8.5 3.2 8.5 7.1z"/></symbol>
+<symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M19 10.4c0 5-4.9 8.8-6.4 9.9a1 1 0 0 1-1.2 0C9.9 19.2 5 15.4 5 10.4a7 7 0 1 1 14 0z"/><circle cx="12" cy="10.2" r="2.6"/></symbol>
+<symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.4 11.6c0 4.2-3.5 7.6-7.8 7.6a8 8 0 0 1-3.7-.9l-4.3 1.3 1.3-4.1a7.4 7.4 0 0 1-1.1-3.9c0-4.2 3.5-7.6 7.8-7.6s7.8 3.4 7.8 7.6z"/><path d="M9.7 9.4c.2 1.6 2.1 3.7 3.9 4.2l.9-1.2 1.7.8v1.1c0 .5-.5 1-1.1.9a7 7 0 0 1-6.2-6c0-.6.3-1 .9-1h1.1z"/></symbol>
+
+<!-- ─── Trust & safety ──────────────────────────────────────────────── -->
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.2 5.5 5.8v5.4c0 4.1 2.7 7.5 6.5 9.1 3.8-1.6 6.5-5 6.5-9.1V5.8z"/><path d="m9.2 11.8 2 2 3.6-3.9"/></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3.5 13.6 8 18 9.6 13.6 11.2 12 15.7 10.4 11.2 6 9.6 10.4 8z"/><path d="M18.4 15.2l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7zM5.4 3.8l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3L3.6 5.6l1.3-.5z"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.6-4.4-7.6-9.4a4.4 4.4 0 0 1 7.6-3 4.4 4.4 0 0 1 7.6 3c0 5-7.6 9.4-7.6 9.4z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 3.4a.6.6 0 0 1 .55.35l2.16 4.55 4.86.68a.6.6 0 0 1 .34 1.03l-3.53 3.5.84 4.98a.6.6 0 0 1-.88.62L12 16.75l-4.34 2.36a.6.6 0 0 1-.88-.62l.84-4.98-3.53-3.5A.6.6 0 0 1 4.43 8.98l4.86-.68 2.16-4.55A.6.6 0 0 1 12 3.4z"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9.4" cy="8.4" r="3.4"/><path d="M3.4 19.4a6 6 0 0 1 12 0"/><path d="M16 5.4a3.4 3.4 0 0 1 0 6.5M17.2 14.2a6 6 0 0 1 3.4 5.2"/></symbol>
+<symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.4"/><path d="m8.6 13.6-1.4 6.6 4.8-2.6 4.8 2.6-1.4-6.6"/></symbol>
+<symbol id="i-clean" viewBox="0 0 24 24"><path d="M9.5 3.5h5l.6 6h-6.2z"/><path d="M8.4 9.5h7.2l.9 8.4a2 2 0 0 1-2 2.2h-5a2 2 0 0 1-2-2.2z"/><path d="M9.2 14.4h5.6"/></symbol>
+
+<!-- ─── Service & logistics ─────────────────────────────────────────── -->
+<symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.8 6.4h10.4v9.2H2.8z"/><path d="M13.2 9.6h3.6l3.4 3.2v2.8h-7z"/><circle cx="7" cy="17.8" r="2"/><circle cx="17" cy="17.8" r="2"/><path d="M9 17.8h6"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5.2" width="17" height="15.3" rx="2.6"/><path d="M3.5 9.8h17M8.2 3.5v3.4M15.8 3.5v3.4"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.4V12l3 1.8"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.1M12 19.1v2.1M4.5 12H2.4M21.6 12h-2.1M6.7 6.7 5.2 5.2M18.8 18.8l-1.5-1.5M6.7 17.3l-1.5 1.5M18.8 5.2l-1.5 1.5"/></symbol>
+<symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3.2s6 6.2 6 10.2a6 6 0 1 1-12 0c0-4 6-10.2 6-10.2z"/></symbol>
+<symbol id="i-power" viewBox="0 0 24 24"><path d="M13.2 3.2 5.6 13.4h5.6l-.8 7.4 7.6-10.2h-5.6z"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24"><rect x="2.4" y="8.6" width="19.2" height="6.8" rx="1.8"/><path d="M6.6 8.6v3M10.2 8.6v4.2M13.8 8.6v3M17.4 8.6v4.2"/></symbol>
+<symbol id="i-weight" viewBox="0 0 24 24"><path d="M3.4 17.4a8.6 8.6 0 1 1 17.2 0"/><path d="m12 17.4 4.4-5.6"/><circle cx="12" cy="17.4" r="1.2" fill="currentColor" stroke="none"/><path d="M3.4 17.4h2.4M18.2 17.4h2.4"/></symbol>
+<symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15.6 3.6a5 5 0 0 0-5.9 6.6L3.6 16.3a2 2 0 0 0 2.8 2.8l6.1-6.1a5 5 0 0 0 6.6-5.9L16.4 9.5 14 9l-.5-2.4z"/></symbol>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8.6 6h5a3.4 3.4 0 0 1 0 6.8h-3a3.4 3.4 0 0 0 0 5.2h4"/></symbol>
+
+<!-- ─── Attractions ─────────────────────────────────────────────────── -->
+<symbol id="i-castle" viewBox="0 0 24 24"><path d="M3.4 20.4V8.6l2.3 1.4V6.4l2.6 1.5V5.2l3.7 2 3.7-2v2.7l2.6-1.5V10l2.3-1.4v11.8z"/><path d="M9.8 20.4v-4.2a2.2 2.2 0 0 1 4.4 0v4.2"/></symbol>
+<symbol id="i-slide" viewBox="0 0 24 24"><path d="M4.6 20.4V7.2h4.6"/><path d="M4.6 11.8h3.2M4.6 16.2h3.2"/><path d="M9.2 7.2c0 7.4 3.6 11 10.2 11"/><path d="M2.8 20.4h18.4"/></symbol>
+<symbol id="i-ballpit" viewBox="0 0 24 24"><path d="M3.6 10.6h16.8v5.8a3.6 3.6 0 0 1-3.6 3.6H7.2a3.6 3.6 0 0 1-3.6-3.6z"/><circle cx="7.8" cy="7.6" r="2.2"/><circle cx="13.4" cy="6.2" r="2"/><circle cx="17.8" cy="8.4" r="1.8"/></symbol>
+<symbol id="i-obstacle" viewBox="0 0 24 24"><path d="M2.8 19.8v-4.6a3.2 3.2 0 0 1 6.4 0v4.6"/><path d="M14.8 19.8v-6.6a3.6 3.6 0 0 1 7.2 0v6.6"/><path d="M2.8 19.8h19.2"/><path d="M11.4 19.8V4.6l4.2 1.6-4.2 1.8"/></symbol>
+<symbol id="i-trampoline" viewBox="0 0 24 24"><ellipse cx="12" cy="14.4" rx="8.6" ry="3.4"/><path d="M5.2 16.6 3.6 20.6M18.8 16.6l1.6 4"/><path d="M12 3.4v3.6M9.6 5.6 12 3.2l2.4 2.4"/><path d="M12 9.6v1.4"/></symbol>
+<symbol id="i-arch" viewBox="0 0 24 24"><path d="M5.4 20.4V12a6.6 6.6 0 0 1 13.2 0v8.4"/><circle cx="12" cy="12.6" r="2.3"/></symbol>
+
+<!-- ─── Add-ons & party services ────────────────────────────────────── -->
+<symbol id="i-popcorn" viewBox="0 0 24 24"><path d="M6.4 9.6h11.2l-1.2 10.8H7.6z"/><path d="M9.6 9.6 9 20.4M14.4 9.6l.6 10.8"/><path d="M7.4 9.4a2.1 2.1 0 0 1 1.4-3.6 2.4 2.4 0 0 1 4.5-1.3 2.2 2.2 0 0 1 3.4 2 2.1 2.1 0 0 1-.1 2.9"/></symbol>
+<symbol id="i-cotton-candy" viewBox="0 0 24 24"><path d="M12 3.4a6 6 0 0 1 6 6c0 3-2.3 4.6-6 4.6s-6-1.6-6-4.6a6 6 0 0 1 6-6z"/><path d="M12 14v6.4M9.8 14.6l-1.2 5.8M14.2 14.6l1.2 5.8"/></symbol>
+<symbol id="i-cake" viewBox="0 0 24 24"><path d="M4.2 20.4v-5.6a2.4 2.4 0 0 1 2.4-2.4h10.8a2.4 2.4 0 0 1 2.4 2.4v5.6z"/><path d="M4.2 16.6c1.6 0 1.6 1.4 3.2 1.4s1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.4 1.4 3 1.4"/><path d="M9 12.4V9.6M15 12.4V9.6M12 12.4V8.4"/><path d="M9 7.4h.01M12 6.2h.01M15 7.4h.01"/></symbol>
+<symbol id="i-gift" viewBox="0 0 24 24"><rect x="3.4" y="9.4" width="17.2" height="11" rx="2.2"/><path d="M3.4 13.4h17.2M12 9.4v11"/><path d="M12 9.4C10.6 6.4 9.4 5 8 5a2 2 0 0 0 0 4.4zM12 9.4c1.4-3 2.6-4.4 4-4.4a2 2 0 0 1 0 4.4z"/></symbol>
+<symbol id="i-balloon" viewBox="0 0 24 24"><path d="M12 3.4c3 0 5.2 2.4 5.2 5.6 0 3.8-3.2 6.8-5.2 6.8s-5.2-3-5.2-6.8c0-3.2 2.2-5.6 5.2-5.6z"/><path d="m12 15.8-.9 1.6h1.8z"/><path d="M12 17.4c0 1.6-1.8 1.4-1.8 3.2"/></symbol>
+<symbol id="i-music" viewBox="0 0 24 24"><path d="M9.4 18.2V6.4l10-2v11.6"/><circle cx="6.6" cy="18.2" r="2.8"/><circle cx="16.6" cy="16" r="2.8"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.4 8.8a2.2 2.2 0 0 1 2.2-2.2h2.2l1.4-2.2h5.6l1.4 2.2h2.2a2.2 2.2 0 0 1 2.2 2.2v9a2.2 2.2 0 0 1-2.2 2.2H5.6a2.2 2.2 0 0 1-2.2-2.2z"/><circle cx="12" cy="13" r="3.8"/></symbol>
+<symbol id="i-rings" viewBox="0 0 24 24"><circle cx="9" cy="14.4" r="5.4"/><circle cx="15" cy="14.4" r="5.4"/><path d="m12 4.4 2 2.4h-4z"/></symbol>
+<symbol id="i-tent" viewBox="0 0 24 24"><path d="M3.6 11.6h16.8l-2.7-4.9a2.2 2.2 0 0 0-1.9-1.1H8.2a2.2 2.2 0 0 0-1.9 1.1z"/><path d="M6.2 11.6v8.8M17.8 11.6v8.8"/><path d="M12 5.6V3.2"/><path d="M2.8 20.4h18.4"/></symbol>
+<symbol id="i-chair" viewBox="0 0 24 24"><path d="M5.4 4.4v7.2M18.6 4.4v7.2"/><rect x="3.4" y="11.2" width="17.2" height="3.6" rx="1.4"/><path d="M6 14.8v4.8M18 14.8v4.8"/></symbol>
+</svg>
