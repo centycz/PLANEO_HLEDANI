@@ -121,11 +121,11 @@
     gap: var(--sp-1);
     padding: var(--sp-3);
     border-radius: var(--r-xl);
-    background: rgb(var(--rgb-cream) / 0.86);
-    -webkit-backdrop-filter: var(--glass-blur);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--border-subtle);
-    box-shadow: var(--sh-xl);
+    /* Opaque, not glass: the hero headline is white at ~100px, and even 14%
+       of it showing through read as a ghost behind the menu links. */
+    background: var(--surface-raised);
+    border: 1px solid var(--border-default);
+    box-shadow: var(--sh-2xl);
     opacity: 0;
     transform: translateY(-10px) scale(0.98);
     pointer-events: none;
@@ -684,12 +684,11 @@ button.day:not(:disabled):hover {
 /* ============================================================================
    Safety
    ========================================================================= */
+/* Marked [data-theme="dark"] in the markup: re-pointing the semantic tokens
+   is all a dark block needs — no per-element colour overrides below. */
 .safety {
-  background: var(--c-ink);
-  color: var(--text-on-dark-muted);
-  --border-subtle: rgb(var(--rgb-cream) / 0.10);
-  --glass-bg: rgb(var(--rgb-cream) / 0.05);
-  --glass-border: rgb(var(--rgb-cream) / 0.12);
+  background: var(--surface-page);
+  color: var(--text-body);
 }
 .safety::before {
   content: '';
@@ -699,9 +698,6 @@ button.day:not(:disabled):hover {
   pointer-events: none;
 }
 .safety > * { position: relative; }
-.safety h2, .safety h3 { color: var(--c-cream); }
-.safety .eyebrow { color: rgb(var(--rgb-cream) / 0.60); }
-.safety .lead { color: rgb(var(--rgb-cream) / 0.72); }
 
 .safety__layout {
   display: grid;
@@ -717,7 +713,7 @@ button.day:not(:disabled):hover {
 }
 .safety__item { gap: var(--sp-3); padding: var(--sp-6); }
 .safety__item h3 { font-size: var(--fs-lg); }
-.safety__item p { color: rgb(var(--rgb-cream) / 0.66); font-size: var(--fs-sm); line-height: var(--lh-relaxed); }
+.safety__item p { color: var(--text-muted); font-size: var(--fs-sm); line-height: var(--lh-relaxed); }
 .safety .icon-tile--soft { background: rgb(var(--rgb-mango) / 0.16); color: var(--c-mango); }
 
 @media (max-width: 900px) {
