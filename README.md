@@ -37,6 +37,24 @@ tak v podsložce.
 
 Bez build kroku — nasazuje se to, co je v repozitáři.
 
+> **GitHub Pages je potřeba jednou zapnout ručně.** Workflow to udělat nemůže:
+> jeho token nemá právo Pages založit (zkoušeno přes `enablement: true`,
+> zamítnuto). Po zapnutí už každý push nasazuje sám.
+
+### Náhled v jednom souboru
+
+```bash
+node scripts/build-standalone.js   # → dist/hopla-preview.html
+```
+
+Celý web — styly, fonty, obrázky, data i skripty — v jediném HTML souboru.
+Otevře se dvojklikem, dá se poslat mailem a projde i přísnou CSP. Slouží
+k ukázce klientovi, ne do provozu: nic se necachuje zvlášť a obrázky se
+nenačítají líně.
+
+Přepínač `--artifact` navíc vygeneruje fragment bez `<html>/<head>/<body>`
+pro prostředí, která dodávají vlastní obal.
+
 ## Výkon
 
 Naměřeno Lighthouse proti serveru s gzipem a cache hlavičkami:
