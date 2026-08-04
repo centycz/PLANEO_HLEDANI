@@ -138,6 +138,62 @@ html = html.replace(
   '<!-- Single-file preview built by scripts/build-standalone.js -->\n<title>'
 );
 
+/* ------------------------------------------------------------ demo notice */
+// The preview is shareable, and the page otherwise reads as a real company's
+// site — working booking form, phone number, address, company number. HOPLA
+// is invented for the design, so anyone who lands here has to be told before
+// they try to book a bouncy castle from a business that does not exist.
+const DEMO_NOTICE = `
+<style>
+  .demo-flag {
+    position: fixed;
+    inset-block-end: var(--sp-4);
+    inset-inline-start: var(--sp-4);
+    z-index: var(--z-toast);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    max-inline-size: min(22rem, calc(100vw - 2 * var(--sp-4)));
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--r-pill);
+    background: rgb(14 16 32 / 0.88);
+    border: 1px solid rgb(255 247 239 / 0.18);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--sh-xl);
+    color: var(--c-cream);
+    font-family: var(--font-text);
+    font-size: var(--fs-xs);
+    line-height: 1.45;
+  }
+  .demo-flag strong { color: var(--c-mango); font-weight: 600; }
+  .demo-flag button {
+    margin-inline-start: auto;
+    flex: none;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border-radius: 50%;
+    color: rgb(255 247 239 / 0.6);
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+    line-height: 1;
+  }
+  .demo-flag button:hover { color: var(--c-cream); background: rgb(255 247 239 / 0.12); }
+  /* Above the mobile action bar, which owns the bottom edge on small screens. */
+  @media (max-width: 620px) {
+    .demo-flag { inset-block-end: 5.5rem; }
+  }
+</style>
+<aside class="demo-flag" role="note">
+  <span><strong>Ukázkový návrh.</strong> HOPLA není skutečná firma —
+    kontakty, ceny i recenze jsou smyšlené.</span>
+  <button type="button" aria-label="Skrýt upozornění"
+          onclick="this.closest('.demo-flag').remove()">&times;</button>
+</aside>`;
+
+html = html.replace('</body>', () => `${DEMO_NOTICE}\n</body>`);
+
 fs.mkdirSync(OUT_DIR, { recursive: true });
 fs.writeFileSync(OUT, html);
 
