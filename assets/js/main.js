@@ -67,7 +67,7 @@ if (document.readyState === 'loading') {
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('/sw.js', { scope: '/' })
+      .register('sw.js')
       .catch((error) => console.warn('[hopla] service worker not registered', error));
   });
 }

@@ -8,12 +8,34 @@ soubor, ES moduly a WebP obrázky — žádný framework, žádný build při na
 
 ## Spuštění
 
+Web potřebuje jakýkoli statický server — otevřít `index.html` dvojklikem
+nestačí, protože prohlížeč blokuje ES moduly a načítání JSON přes `file://`.
+
 ```bash
-python3 -m http.server 8000     # jakýkoli statický server
+python3 -m http.server 8000     # cokoli, co servíruje soubory
 ```
 
-Otevřete `http://localhost:8000`. Service worker se registruje jen přes
-HTTPS, takže lokálně nepřekáží.
+Otevřete `http://localhost:8000`.
+
+Nebo s gzipem a cache hlavičkami, tedy tak, jak se web chová v produkci
+(takhle měřím Lighthouse):
+
+```bash
+npm run serve                   # http://localhost:8877
+```
+
+## Nasazení
+
+Všechny cesty jsou relativní, takže web funguje jak na vlastní doméně,
+tak v podsložce.
+
+| Kam | Jak |
+| --- | --- |
+| **GitHub Pages** | Settings → Pages → Source: **GitHub Actions**. Workflow `.github/workflows/pages.yml` nasadí při každém pushi. |
+| **Netlify** | Připojit repozitář, nebo přetáhnout složku na [netlify.com/drop](https://app.netlify.com/drop). `netlify.toml` je připravený. |
+| **Vercel / Cloudflare Pages** | Připojit repozitář. Žádný build command, output je kořen repa. |
+
+Bez build kroku — nasazuje se to, co je v repozitáři.
 
 ## Výkon
 

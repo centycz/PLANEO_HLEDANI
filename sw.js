@@ -17,18 +17,21 @@ const MEDIA_MAX_ENTRIES = 40;
 
 /** The minimum needed to render something useful without a network. */
 const PRECACHE = [
-  '/',
-  '/index.html',
-  '/offline.html',
-  '/assets/css/hopla.css',
-  '/assets/js/main.js',
-  '/assets/js/lib/api.js',
-  '/assets/js/lib/dom.js',
-  '/assets/fonts/outfit-var.woff2',
-  '/assets/fonts/inter-var.woff2',
-  '/assets/img/logo-mark.svg',
-  '/manifest.webmanifest',
-];
+  './',
+  'index.html',
+  'offline.html',
+  'assets/css/hopla.css',
+  'assets/js/main.js',
+  'assets/js/lib/api.js',
+  'assets/js/lib/dom.js',
+  'assets/fonts/outfit-var.woff2',
+  'assets/fonts/inter-var.woff2',
+  'assets/img/logo-mark.svg',
+  'manifest.webmanifest',
+].map((p) => new URL(p, self.registration.scope).pathname);
+
+/** Path prefix the worker is installed under ('/' at a domain root). */
+const BASE = new URL('./', self.registration.scope).pathname;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -98,16 +101,16 @@ self.addEventListener('fetch', (event) => {
   if (request.headers.has('range')) return;
 
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(request, SHELL, '/offline.html'));
+    event.respondWith(networkFirst(request, SHELL, BASE + 'offline.html'));
     return;
   }
 
-  if (url.pathname.startsWith('/assets/data/')) {
+  if (url.pathname.startsWith(BASE + 'assets/data/')) {
     event.respondWith(networkFirst(request, ASSETS));
     return;
   }
 
-  if (url.pathname.startsWith('/assets/img/art/')) {
+  if (url.pathname.startsWith(BASE + 'assets/img/art/')) {
     event.respondWith(cacheFirst(request, MEDIA, { max: MEDIA_MAX_ENTRIES }));
     return;
   }

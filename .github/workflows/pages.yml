@@ -1,0 +1,49 @@
+name: Deploy to GitHub Pages
+
+# The site is plain static files with no build step, so this uploads the
+# repository as-is. Every path in the markup is relative, which is why it
+# works both at a domain root and under /<repo-name>/ on Pages.
+
+on:
+  push:
+    branches:
+      - main
+      - claude/inflatable-rentals-premium-site-2anima
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it mid-publish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage the publishable files
+        run: |
+          mkdir -p _site
+          # Everything the browser needs; tooling and docs stay out of the
+          # deployed bundle.
+          cp -r assets _site/
+          cp index.html design-system.html offline.html _site/
+          cp manifest.webmanifest sw.js favicon.ico robots.txt sitemap.xml _site/
+          # Pages runs Jekyll by default, which skips files starting with "_".
+          touch _site/.nojekyll
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

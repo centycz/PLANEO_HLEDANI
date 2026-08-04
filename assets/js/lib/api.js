@@ -24,7 +24,7 @@
  * an integer in the minor-unit-free CZK the business actually invoices in.
  */
 
-const DATA = '/assets/data';
+const DATA = 'assets/data';
 
 /* -------------------------------------------------------------------------
    Date helpers — deliberately timezone-naive. A booking on 14 August is the
