@@ -39,6 +39,12 @@ jobs:
     name: Deploy nakupy to VPS
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    # Stejné prostředí jako u nasazení vydaje - kdyby přístupové údaje byly
+    # uložené jako secrety prostředí, jinak by se sem nedostaly. Podle historie
+    # běhů na tomhle prostředí nečeká žádné schvalování.
+    environment:
+      name: production
+      url: https://nakupy.dalcortile.cz
     env:
       VPS_HOST: 194.182.90.156
       VPS_USER: deploy
