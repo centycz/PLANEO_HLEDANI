@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Oblíbené · Nákupy{% endblock %}
+{% block content %}
+<h1>Oblíbené položky</h1>
+<p class="muted">Rychlé přidání toho, co kupuješ pořád dokola.</p>
+
+<div class="card">
+  {% for favorite in favorites %}
+    {% set item = favorite.catalog_item %}
+    {% set deal = deal_prices.get(item.id) %}
+    <div class="item">
+      <div class="body">
+        <div class="name">{{ item.name }}</div>
+        <div class="meta">
+          {{ item.category.icon ~ ' ' ~ item.category.name if item.category else 'nezařazeno' }}
+          {% if deal %}· <span class="badge deal">v akci {{ deal.price|money }}</span>{% endif %}
+        </div>
+      </div>
+      <div class="row">
+        <form class="inline-form" method="post" action="/katalog/{{ item.id }}/na-seznam">
+          <input type="hidden" name="list_id" value="{{ lists[0].id if lists else '' }}">
+          <input type="hidden" name="qty" value="{{ favorite.default_qty|qty }}">
+          <button class="btn btn-sm btn-primary" type="submit">+ na seznam</button>
+        </form>
+        <form class="inline-form" method="post" action="/oblibene/{{ favorite.id }}/smazat">
+          <button class="btn btn-sm" type="submit" title="Odebrat">★</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <div class="empty">Zatím nic. Hvězdičkou v <a href="/katalog">katalogu</a> nebo ve <a href="/slevy">slevách</a> si sem položku přidáš.</div>
+  {% endfor %}
+</div>
+{% endblock %}

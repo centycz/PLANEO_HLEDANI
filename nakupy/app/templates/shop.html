@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Nákup: {{ list.title }} · Nákupy{% endblock %}
+{% block content %}
+
+<div class="card" data-watch-list="{{ list.id }}" data-updated-at="{{ list.updated_at.isoformat() }}">
+  <div class="between">
+    <div>
+      <h1 style="margin-bottom:.1rem">{{ list.title }}</h1>
+      <small>
+        {% if list.store %}{{ list.store.name }} · {% endif %}
+        položky jsou seřazené podle úseků, jak jimi procházíš
+      </small>
+    </div>
+    <span class="badge ok" data-progress-text>{{ progress.done }} / {{ progress.total }}</span>
+  </div>
+  <div class="progress" style="margin:.6rem 0"><span data-progress-bar style="width:{{ progress.pct }}%"></span></div>
+  {% if list.note %}<p class="muted">📌 {{ list.note }}</p>{% endif %}
+  {% if list.store %}
+    <small class="muted"><a href="/nastaveni/rozlozeni/{{ list.store.id }}">Upravit pořadí úseků v {{ list.store.name }}</a></small>
+  {% endif %}
+</div>
+
+{% for category, items in grouped %}
+  <div class="section-title">
+    {{ category.icon if category else '🛒' }} {{ category.name if category else 'Nezařazeno' }}
+    <span class="muted" style="font-weight:400;text-transform:none">
+      ({{ items|selectattr('status', 'equalto', 'todo')|list|length }} zbývá)
+    </span>
+  </div>
+  <div class="card tight">
+    {% for item in items %}
+      {% set deal = deal_prices.get(item.catalog_item_id) %}
+      <div class="item {{ 'done' if item.status == 'bought' }} {{ 'missing' if item.status == 'missing' }}">
+        <form class="inline-form" method="post" data-quick-status
+              action="/nakup/polozka/{{ item.id }}/stav">
+          <input type="hidden" name="status" value="{{ 'todo' if item.status == 'bought' else 'bought' }}">
+          <button class="check {{ 'on' if item.status == 'bought' }}" type="submit"
+                  aria-label="Označit jako koupené">{{ '✓' if item.status == 'bought' else '' }}</button>
+        </form>
+        <div class="body">
+          <div class="name">
+            {% if item.is_urgent %}❗{% endif %}{{ item.name }}
+            <span class="muted">{{ item.qty|qty }} {{ item.unit }}</span>
+          </div>
+          <div class="meta">
+            {% if deal %}
+              <span class="badge deal">v akci {{ deal.price|money }}{% if deal.discount_pct %} · −{{ deal.discount_pct }} %{% endif %}</span>
+            {% endif %}
+            {% if item.note %}{{ item.note }}{% endif %}
+            {% if not item.allow_substitute %}<span class="badge warn">nenahrazovat</span>{% endif %}
+            <span data-item-price>{% if item.bought_price %}{{ item.bought_price|money }}{% endif %}</span>
+          </div>
+          <details>
+            <summary>cena / nebylo skladem</summary>
+            <form method="post" action="/nakup/polozka/{{ item.id }}/stav" class="row wrap-row" style="margin:.4rem 0">
+              <input type="hidden" name="status" value="bought">
+              <input type="text" name="price" inputmode="decimal" style="width:100px"
+                     value="{{ item.bought_price|qty if item.bought_price }}" placeholder="cena" aria-label="Cena">
+              <input type="text" name="note" placeholder="poznámka / náhrada" style="flex:1;min-width:140px"
+                     value="{{ item.bought_note }}">
+              <button class="btn-sm primary" type="submit">Koupeno</button>
+            </form>
+            <form method="post" action="/nakup/polozka/{{ item.id }}/stav" class="row wrap-row">
+              <input type="hidden" name="status" value="missing">
+              <input type="text" name="note" placeholder="proč (nebylo, jiná cena…)" style="flex:1;min-width:140px">
+              <button class="btn-sm danger" type="submit">Nebylo</button>
+            </form>
+          </details>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty">Na seznamu nic není.</div>
+{% endfor %}
+
+<div class="card tight">
+  <h3>Koupil jsem něco navíc</h3>
+  <form method="post" action="/nakup/{{ list.id }}/pridat" class="row wrap-row">
+    <div class="suggest-box" style="flex:1;min-width:180px">
+      <input type="text" name="name" placeholder="Název položky" data-suggest autocomplete="off" required>
+      <input type="hidden" name="catalog_item_id" value="">
+    </div>
+    <input type="text" name="qty" value="1" inputmode="decimal" style="width:70px" aria-label="Množství">
+    <input type="text" name="price" inputmode="decimal" style="width:100px" placeholder="cena" aria-label="Cena">
+    <button class="primary" type="submit">Přidat</button>
+  </form>
+</div>
+
+<div class="sticky-total between">
+  <div>
+    <div class="muted" style="font-size:.8rem">Utraceno</div>
+    <strong data-spent>{{ progress.spent|money }}</strong>
+    {% if list.budget %}<span class="muted"> / {{ list.budget|money }}</span>{% endif %}
+  </div>
+  <form method="post" action="/nakup/{{ list.id }}/dokoncit"
+        data-confirm="Uzavřít nákup? Neodškrtnuté položky se označí jako nekoupené.">
+    <button class="primary" type="submit">Hotovo</button>
+  </form>
+</div>
+{% endblock %}

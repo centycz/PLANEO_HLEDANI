@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Historie · Nákupy{% endblock %}
+{% block content %}
+<h1>Historie nákupů</h1>
+
+<div class="card tight">
+  <form method="get" action="/historie" class="row wrap-row">
+    <input type="search" name="q" value="{{ q }}" placeholder="Hledat položku…" style="flex:1;min-width:180px">
+    <button class="primary" type="submit">Hledat</button>
+  </form>
+</div>
+
+{% if monthly %}
+<h2>Útrata po měsících</h2>
+<div class="card tight table-scroll">
+  <table>
+    <tr><th>Měsíc</th><th>Utraceno</th></tr>
+    {% for month, amount in monthly %}
+      <tr><td>{{ month }}</td><td>{{ amount|money }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+{% if frequent %}
+<h2>Co kupujete nejčastěji</h2>
+<div class="card tight table-scroll">
+  <table>
+    <tr><th>Položka</th><th>Počet</th><th>Interval</th><th>Naposledy</th></tr>
+    {% for suggestion in frequent %}
+      <tr>
+        <td>{{ suggestion.name }}</td>
+        <td>{{ suggestion.count }}×</td>
+        <td>{{ (suggestion.avg_interval_days|round|int|string ~ ' dní') if suggestion.avg_interval_days else '—' }}</td>
+        <td>{{ suggestion.last_bought|ago }} {% if suggestion.is_due %}<span class="badge ok">došlo?</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+
+<h2>Poslední nákupy</h2>
+<div class="card tight table-scroll">
+  <table>
+    <tr><th>Datum</th><th>Položka</th><th>Množství</th><th>Cena</th><th>Obchod</th></tr>
+    {% for purchase in purchases %}
+      <tr>
+        <td>{{ purchase.bought_at|dt('%-d. %-m. %Y') }}</td>
+        <td>{{ purchase.name }}</td>
+        <td>{{ purchase.qty|qty }} {{ purchase.unit }}</td>
+        <td>{{ purchase.price|money if purchase.price else '—' }}</td>
+        <td>{{ purchase.store.name if purchase.store else '—' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5" class="empty">Zatím žádná historie. Dokonči první nákup a začne se plnit.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

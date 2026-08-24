@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Katalog · Nákupy{% endblock %}
+{% block content %}
+<h1>Katalog</h1>
+<p class="muted">{{ total }} položek. Katalog se plní z nahraných PDF a z toho, co si zapíšeš do seznamu.</p>
+
+<div class="card tight">
+  <form method="get" action="/katalog" class="row wrap-row">
+    <input type="search" name="q" value="{{ q }}" placeholder="Hledat v katalogu…" style="flex:1;min-width:180px">
+    <select name="category_id" style="width:auto;min-width:160px">
+      <option value="">Všechny úseky</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}" {{ 'selected' if category_id == c.id|string }}>{{ c.icon }} {{ c.name }}</option>
+      {% endfor %}
+    </select>
+    <button class="primary" type="submit">Hledat</button>
+  </form>
+</div>
+
+<div class="card">
+  {% for item in items %}
+    {% set deal = deal_prices.get(item.id) %}
+    <div class="item">
+      <div class="body">
+        <div class="name">{{ item.name }}</div>
+        <div class="meta">
+          {{ item.category.icon ~ ' ' ~ item.category.name if item.category else 'nezařazeno' }}
+          {% if item.package %}· {{ item.package }}{% endif %}
+          {% if deal %}
+            · <span class="badge deal">{{ deal.price|money }}{% if deal.discount_pct %} · −{{ deal.discount_pct }} %{% endif %}</span>
+            {% if deal.valid_to %}<span class="muted">do {{ deal.valid_to|d }}</span>{% endif %}
+          {% endif %}
+        </div>
+        <details>
+          <summary>upravit</summary>
+          <form method="post" action="/katalog/{{ item.id }}/upravit" class="row wrap-row" style="margin-top:.4rem">
+            <input type="text" name="name" value="{{ item.name }}" style="flex:1;min-width:160px">
+            <input type="text" name="unit" value="{{ item.unit }}" style="width:80px" aria-label="Jednotka">
+            <select name="category_id" style="width:auto;min-width:150px">
+              <option value="">— nezařazeno —</option>
+              {% for c in categories %}
+                <option value="{{ c.id }}" {{ 'selected' if item.category_id == c.id }}>{{ c.icon }} {{ c.name }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn-sm primary" type="submit">Uložit</button>
+          </form>
+        </details>
+      </div>
+      <div class="row">
+        <form class="inline-form" method="post" action="/katalog/{{ item.id }}/oblibene">
+          <button class="btn btn-sm" type="submit" title="Oblíbené">{{ '★' if item.id in favorites else '☆' }}</button>
+        </form>
+        <form class="inline-form" method="post" action="/katalog/{{ item.id }}/na-seznam">
+          <input type="hidden" name="list_id" value="{{ lists[0].id if lists else '' }}">
+          <button class="btn btn-sm btn-primary" type="submit">+</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <div class="empty">Nic nenalezeno. Nahraj katalog v PDF v sekci <a href="/import">Import</a>.</div>
+  {% endfor %}
+</div>
+
+{% if pages > 1 %}
+<div class="row wrap-row" style="justify-content:center">
+  {% if page > 1 %}
+    <a class="btn btn-sm" href="/katalog?q={{ q }}&category_id={{ category_id }}&page={{ page - 1 }}">← předchozí</a>
+  {% endif %}
+  <span class="muted">strana {{ page }} z {{ pages }}</span>
+  {% if page < pages %}
+    <a class="btn btn-sm" href="/katalog?q={{ q }}&category_id={{ category_id }}&page={{ page + 1 }}">další →</a>
+  {% endif %}
+</div>
+{% endif %}
+
+<h2>Přidat položku ručně</h2>
+<div class="card tight">
+  <form method="post" action="/katalog/nova" class="row wrap-row">
+    <input type="text" name="name" placeholder="Název položky" style="flex:1;min-width:180px" required>
+    <input type="text" name="unit" value="ks" style="width:80px" aria-label="Jednotka">
+    <select name="category_id" style="width:auto;min-width:150px">
+      <option value="">— odhadnout —</option>
+      {% for c in categories %}<option value="{{ c.id }}">{{ c.icon }} {{ c.name }}</option>{% endfor %}
+    </select>
+    <button class="primary" type="submit">Přidat</button>
+  </form>
+</div>
+{% endblock %}

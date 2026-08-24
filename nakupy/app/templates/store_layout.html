@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Trasa: {{ store.name }} · Nákupy{% endblock %}
+{% block content %}
+<h1>Trasa obchodem — {{ store.name }}</h1>
+<p class="muted">
+  Nastav pořadí úseků tak, jak jimi v tomhle obchodě procházíš. Nákupčímu se
+  podle toho seřadí seznam, takže nemusí běhat sem a tam.
+</p>
+
+<form method="post" action="/nastaveni/rozlozeni/{{ store.id }}">
+  <div class="card">
+    {% for row in rows %}
+      <div class="row" style="padding:.3rem 0;border-bottom:1px solid var(--border)">
+        <input type="number" name="position_{{ row.category.id }}" value="{{ row.position }}"
+               style="width:90px" aria-label="Pořadí">
+        <span>{{ row.category.icon }} {{ row.category.name }}</span>
+        {% if row.custom %}<span class="badge ok">vlastní</span>{% endif %}
+      </div>
+    {% endfor %}
+    <button class="primary btn-block" type="submit" style="margin-top:.7rem">Uložit trasu</button>
+  </div>
+</form>
+
+<form method="post" action="/nastaveni/rozlozeni/{{ store.id }}/vychozi"
+      data-confirm="Vrátit pořadí na výchozí?">
+  <button class="danger" type="submit">Zpět na výchozí pořadí</button>
+</form>
+<p style="margin-top:1rem"><a href="/nastaveni">← Zpět do nastavení</a></p>
+{% endblock %}

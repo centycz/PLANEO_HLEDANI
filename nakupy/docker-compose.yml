@@ -1,0 +1,15 @@
+services:
+  nakupy:
+    build: .
+    image: nakupy:latest
+    container_name: nakupy
+    restart: unless-stopped
+    env_file: .env
+    # posloucha jen na localhotu - navenek to publikuje nginx na hostiteli
+    ports:
+      - "127.0.0.1:${NAKUPY_HOST_PORT:-8081}:8000"
+    volumes:
+      - ./data:/data
+    environment:
+      NAKUPY_DATA_DIR: /data
+      NAKUPY_PORT: "8000"

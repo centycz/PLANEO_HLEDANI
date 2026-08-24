@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}{{ list.title }} · Nákupy{% endblock %}
+{% block content %}
+
+<div class="card" data-watch-list="{{ list.id }}" data-updated-at="{{ list.updated_at.isoformat() }}"
+     data-reload="{{ '1' if list.status == 'shopping' else '0' }}">
+  <div class="between">
+    <div>
+      <h1 style="margin-bottom:.1rem">{{ list.title }}</h1>
+      <small>
+        {{ LIST_STATES.get(list.status, list.status) }}
+        {% if list.store %}· {{ list.store.name }}{% endif %}
+        {% if list.created_by %}· zadal {{ list.created_by.display_name }}{% endif %}
+        {% if list.shopper %}· nakupuje {{ list.shopper.display_name }}{% endif %}
+      </small>
+    </div>
+    <span class="badge ok" data-progress-text>{{ progress.done }} / {{ progress.total }}</span>
+  </div>
+  <div class="progress" style="margin:.6rem 0"><span data-progress-bar style="width:{{ progress.pct }}%"></span></div>
+  <div class="row wrap-row">
+    {% if list.status != 'done' %}
+      <a class="btn btn-primary" href="/nakup/{{ list.id }}">Režim nákupčího</a>
+      <form class="inline-form" method="post" action="/seznam/{{ list.id }}/dokoncit"
+            data-confirm="Opravdu nákup uzavřít? Koupené položky se zapíší do historie.">
+        <button type="submit">Dokončit nákup</button>
+      </form>
+    {% else %}
+      <form class="inline-form" method="post" action="/seznam/{{ list.id }}/znovu">
+        <button type="submit">Otevřít znovu</button>
+      </form>
+      <form class="inline-form" method="post" action="/seznam/{{ list.id }}/zkopirovat">
+        <button type="submit">Zopakovat nákup</button>
+      </form>
+    {% endif %}
+    <span class="muted">utraceno <strong data-spent>{{ progress.spent|money }}</strong>
+      {% if list.budget %}z {{ list.budget|money }}{% endif %}</span>
+  </div>
+  {% if list.note %}<p class="muted" style="margin-top:.6rem">📌 {{ list.note }}</p>{% endif %}
+</div>
+
+{% if list.status != 'done' %}
+<div class="card tight">
+  <form method="post" action="/seznam/{{ list.id }}/pridat" class="row wrap-row">
+    <div class="suggest-box" style="flex:1;min-width:200px">
+      <input type="text" name="name" placeholder="Co koupit?" data-suggest autocomplete="off" required>
+      <input type="hidden" name="catalog_item_id" value="">
+    </div>
+    <input type="text" name="qty" value="1" inputmode="decimal" style="width:70px" aria-label="Množství">
+    <input type="text" name="unit" placeholder="ks" style="width:80px" aria-label="Jednotka">
+    <button class="primary" type="submit">Přidat</button>
+  </form>
+  <details style="margin-top:.5rem">
+    <summary>Vložit víc položek najednou</summary>
+    <form method="post" action="/seznam/{{ list.id }}/hromadne" style="margin-top:.5rem">
+      <textarea name="text" placeholder="Jedna položka na řádek, např.:&#10;2x mléko&#10;chleba&#10;3 rohlíky"></textarea>
+      <button class="primary btn-block" type="submit" style="margin-top:.4rem">Přidat vše</button>
+    </form>
+  </details>
+</div>
+{% endif %}
+
+{% for category, items in grouped %}
+  <div class="section-title">
+    {{ category.icon if category else '🛒' }} {{ category.name if category else 'Nezařazeno' }}
+  </div>
+  <div class="card tight">
+    {% for item in items %}
+      {% set deal = deal_prices.get(item.catalog_item_id) %}
+      <div class="item {{ 'done' if item.status == 'bought' }} {{ 'missing' if item.status == 'missing' }}">
+        <div class="body">
+          <div class="name">
+            {% if item.is_urgent %}❗{% endif %}{{ item.name }}
+            <span class="muted">{{ item.qty|qty }} {{ item.unit }}</span>
+            {% if deal %}<span class="badge deal">akce {{ deal.price|money }}{% if deal.discount_pct %} · −{{ deal.discount_pct }} %{% endif %}</span>{% endif %}
+          </div>
+          <div class="meta">
+            {{ ITEM_STATES.get(item.status, item.status) }}
+            {% if item.status == 'bought' and item.bought_price %}· <span data-item-price>{{ item.bought_price|money }}</span>{% endif %}
+            {% if item.bought_by %}· {{ item.bought_by.display_name }}{% endif %}
+            {% if item.note %}· {{ item.note }}{% endif %}
+            {% if item.bought_note %}· <em>{{ item.bought_note }}</em>{% endif %}
+            {% if not item.allow_substitute %}· <span class="badge warn">bez náhrady</span>{% endif %}
+          </div>
+        </div>
+        <details>
+          <summary>⋯</summary>
+          <form method="post" action="/polozka/{{ item.id }}/upravit" style="margin:.4rem 0">
+            <div class="row wrap-row">
+              <input type="text" name="qty" value="{{ item.qty|qty }}" style="width:70px" aria-label="Množství">
+              <input type="text" name="unit" value="{{ item.unit }}" style="width:80px" aria-label="Jednotka">
+              <select name="category_id" style="width:auto;flex:1;min-width:150px">
+                <option value="">— nezařazeno —</option>
+                {% for c in categories %}
+                  <option value="{{ c.id }}" {{ 'selected' if item.category_id == c.id }}>{{ c.icon }} {{ c.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <input type="text" name="note" value="{{ item.note }}" placeholder="poznámka (značka, velikost…)" style="margin-top:.4rem">
+            <div class="row wrap-row" style="margin-top:.4rem">
+              <label class="row"><input type="checkbox" name="is_urgent" {{ 'checked' if item.is_urgent }} style="width:auto"> nutné</label>
+              <label class="row"><input type="checkbox" name="allow_substitute" {{ 'checked' if item.allow_substitute }} style="width:auto"> lze nahradit</label>
+              <button class="btn-sm primary" type="submit">Uložit</button>
+            </div>
+          </form>
+          <form method="post" action="/polozka/{{ item.id }}/smazat" data-confirm="Smazat položku?">
+            <button class="btn-sm danger" type="submit">Smazat položku</button>
+          </form>
+        </details>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty">Seznam je zatím prázdný. Přidej první položku výš.</div>
+{% endfor %}
+
+{% if list.status != 'done' and suggestions %}
+<h2>Nezapomněli jste?</h2>
+<div class="card tight">
+  <div class="chip-row">
+    {% for suggestion in suggestions %}
+      <form class="inline-form" method="post" action="/seznam/{{ list.id }}/pridat">
+        <input type="hidden" name="name" value="{{ suggestion.name }}">
+        <input type="hidden" name="catalog_item_id" value="{{ suggestion.catalog_item_id or '' }}">
+        <button class="chip {{ 'due' if suggestion.is_due }}" type="submit" title="{{ suggestion.reason }}">
+          + {{ suggestion.name }}
+        </button>
+      </form>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if list.status != 'done' and favorites %}
+<h2>Oblíbené</h2>
+<div class="card tight">
+  <div class="chip-row">
+    {% for favorite in favorites %}
+      <form class="inline-form" method="post" action="/seznam/{{ list.id }}/pridat">
+        <input type="hidden" name="name" value="{{ favorite.catalog_item.name }}">
+        <input type="hidden" name="catalog_item_id" value="{{ favorite.catalog_item_id }}">
+        <input type="hidden" name="qty" value="{{ favorite.default_qty|qty }}">
+        <button class="chip" type="submit">★ {{ favorite.catalog_item.name }}</button>
+      </form>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<h2>Nastavení seznamu</h2>
+<div class="card">
+  <form method="post" action="/seznam/{{ list.id }}/nastaveni">
+    <div class="grid two">
+      <div class="field">
+        <label for="title">Název</label>
+        <input id="title" type="text" name="title" value="{{ list.title }}">
+      </div>
+      <div class="field">
+        <label for="store_id">Obchod (určuje pořadí úseků)</label>
+        <select id="store_id" name="store_id">
+          <option value="">— nevybráno —</option>
+          {% for store in stores %}
+            <option value="{{ store.id }}" {{ 'selected' if list.store_id == store.id }}>{{ store.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="shopper_id">Nákupčí</label>
+        <select id="shopper_id" name="shopper_id">
+          <option value="">— kdokoli —</option>
+          {% for u in users %}
+            <option value="{{ u.id }}" {{ 'selected' if list.shopper_id == u.id }}>{{ u.display_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="budget">Rozpočet (Kč)</label>
+        <input id="budget" type="text" name="budget" inputmode="decimal" value="{{ list.budget|qty if list.budget }}">
+      </div>
+    </div>
+    <div class="field">
+      <label for="note">Poznámka pro nákupčího</label>
+      <input id="note" type="text" name="note" value="{{ list.note }}">
+    </div>
+    <button class="primary" type="submit">Uložit</button>
+  </form>
+  <hr>
+  <form method="post" action="/seznam/{{ list.id }}/smazat" data-confirm="Opravdu smazat celý seznam?">
+    <button class="danger" type="submit">Smazat seznam</button>
+  </form>
+</div>
+{% endblock %}

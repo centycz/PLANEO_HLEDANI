@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Seznamy · Nákupy{% endblock %}
+{% block content %}
+<h1>Nákupní seznamy</h1>
+
+<div class="card">
+  <h2 style="margin-top:0">Nový seznam</h2>
+  <form method="post" action="/seznamy/novy">
+    <div class="grid two">
+      <div class="field">
+        <label for="title">Název</label>
+        <input id="title" type="text" name="title" placeholder="Velký nákup">
+      </div>
+      <div class="field">
+        <label for="store_id">Obchod</label>
+        <select id="store_id" name="store_id">
+          <option value="">— nevybráno —</option>
+          {% for store in stores %}<option value="{{ store.id }}">{{ store.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="budget">Rozpočet (Kč)</label>
+        <input id="budget" type="text" name="budget" inputmode="decimal" placeholder="např. 1500">
+      </div>
+      <div class="field">
+        <label for="note">Poznámka pro nákupčího</label>
+        <input id="note" type="text" name="note" placeholder="Kup jen když bude v akci…">
+      </div>
+    </div>
+    <button class="primary btn-block" type="submit">Založit</button>
+  </form>
+</div>
+
+{% for shopping_list in lists %}
+  {% set p = progress[shopping_list.id] %}
+  <div class="card tight">
+    <div class="between">
+      <div style="min-width:0">
+        <a href="/seznam/{{ shopping_list.id }}"><strong>{{ shopping_list.title }}</strong></a>
+        <div class="meta muted">
+          {{ LIST_STATES.get(shopping_list.status, shopping_list.status) }}
+          {% if shopping_list.store %}· {{ shopping_list.store.name }}{% endif %}
+          · {{ p.done }}/{{ p.total }} položek
+          {% if p.spent %}· {{ p.spent|money }}{% endif %}
+          · {{ shopping_list.updated_at|ago }}
+        </div>
+      </div>
+      <div class="row">
+        {% if shopping_list.status != 'done' %}
+          <a class="btn btn-sm btn-primary" href="/nakup/{{ shopping_list.id }}">Nakupovat</a>
+        {% else %}
+          <form class="inline-form" method="post" action="/seznam/{{ shopping_list.id }}/zkopirovat">
+            <button class="btn btn-sm" type="submit">Zopakovat</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+    {% if p.total %}<div class="progress" style="margin-top:.5rem"><span style="width:{{ p.pct }}%"></span></div>{% endif %}
+  </div>
+{% else %}
+  <div class="empty">Zatím žádné seznamy.</div>
+{% endfor %}
+{% endblock %}

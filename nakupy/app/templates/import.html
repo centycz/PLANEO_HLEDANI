@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Import PDF · Nákupy{% endblock %}
+{% block content %}
+<h1>Import katalogu a letáku</h1>
+<p class="muted">
+  Nahraj PDF katalogu sortimentu nebo letáku se slevami. Aplikace z něj vytáhne
+  položky s cenami, ty je zkontroluješ a potvrdíš zápis do katalogu.
+</p>
+
+<div class="card">
+  <form method="post" action="/import" enctype="multipart/form-data">
+    <div class="field">
+      <label for="file">PDF soubor</label>
+      <input id="file" type="file" name="file" accept="application/pdf,.pdf" required>
+    </div>
+    <div class="grid two">
+      <div class="field">
+        <label for="kind">Typ dokumentu</label>
+        <select id="kind" name="kind">
+          {% for key, label in kinds.items() %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="store_id">Obchod</label>
+        <select id="store_id" name="store_id">
+          <option value="">— nevybráno —</option>
+          {% for store in stores %}<option value="{{ store.id }}">{{ store.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="valid_from">Platí od</label>
+        <input id="valid_from" type="date" name="valid_from">
+      </div>
+      <div class="field">
+        <label for="valid_to">Platí do</label>
+        <input id="valid_to" type="date" name="valid_to">
+      </div>
+    </div>
+    <small class="muted">U letáku data vyplň — podle nich se slevy samy přestanou zobrazovat.</small>
+    <button class="primary btn-block" type="submit" style="margin-top:.7rem">Nahrát a zpracovat</button>
+  </form>
+</div>
+
+<h2>Nahrané dokumenty</h2>
+{% for document in documents %}
+  <div class="card tight between">
+    <div style="min-width:0">
+      <a href="/import/{{ document.id }}"><strong>{{ document.filename }}</strong></a>
+      <div class="meta muted">
+        {{ kinds.get(document.kind, document.kind) }}
+        {% if document.store %}· {{ document.store.name }}{% endif %}
+        · {{ states.get(document.status, document.status) }}
+        · {{ document.row_count }} nalezeno / {{ document.imported_count }} zapsáno
+        {% if document.valid_from or document.valid_to %}
+          · platnost {{ document.valid_from|d }} – {{ document.valid_to|d }}
+        {% endif %}
+        · {{ document.uploaded_at|dt('%-d. %-m. %Y') }}
+      </div>
+      {% if document.error %}<div class="meta" style="color:var(--warn)">{{ document.error }}</div>{% endif %}
+    </div>
+    <form method="post" action="/import/{{ document.id }}/smazat"
+          data-confirm="Smazat dokument? Položky v katalogu zůstanou.">
+      <input type="hidden" name="keep_catalog" value="on">
+      <button class="btn btn-sm danger" type="submit">Smazat</button>
+    </form>
+  </div>
+{% else %}
+  <div class="empty">Zatím nic nahraného.</div>
+{% endfor %}
+{% endblock %}

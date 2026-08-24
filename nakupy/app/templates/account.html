@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Můj účet · Nákupy{% endblock %}
+{% block content %}
+<h1>Můj účet</h1>
+<p class="muted">{{ user.username }} · {{ ROLES.get(user.role, user.role) }}</p>
+
+<div class="card">
+  <h2 style="margin-top:0">Zobrazované jméno</h2>
+  <form method="post" action="/ucet/jmeno" class="row wrap-row">
+    <input type="text" name="display_name" value="{{ user.display_name }}" style="flex:1;min-width:180px">
+    <button class="primary" type="submit">Uložit</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Změna hesla</h2>
+  <form method="post" action="/ucet/heslo">
+    <div class="field">
+      <label for="cp">Současné heslo</label>
+      <input id="cp" type="password" name="current_password" autocomplete="current-password" required>
+    </div>
+    <div class="grid two">
+      <div class="field">
+        <label for="np">Nové heslo</label>
+        <input id="np" type="password" name="new_password" autocomplete="new-password" required>
+      </div>
+      <div class="field">
+        <label for="np2">Nové heslo znovu</label>
+        <input id="np2" type="password" name="new_password2" autocomplete="new-password" required>
+      </div>
+    </div>
+    <button class="primary" type="submit">Změnit heslo</button>
+  </form>
+</div>
+{% endblock %}

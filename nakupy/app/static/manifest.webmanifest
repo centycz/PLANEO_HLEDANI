@@ -1,0 +1,13 @@
+{
+  "name": "Nákupy",
+  "short_name": "Nákupy",
+  "description": "Privátní nákupní seznam se slevami z letáku a doporučením podle historie.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#1f7a4d",
+  "icons": [
+    { "src": "/static/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

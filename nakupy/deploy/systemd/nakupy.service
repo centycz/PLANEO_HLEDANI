@@ -1,0 +1,26 @@
+# Varianta bez Dockeru: /etc/systemd/system/nakupy.service
+#   systemctl daemon-reload && systemctl enable --now nakupy
+[Unit]
+Description=Nakupy - privatni nakupni aplikace
+After=network.target
+
+[Service]
+Type=simple
+User=nakupy
+Group=nakupy
+WorkingDirectory=/srv/nakupy/app
+EnvironmentFile=/srv/nakupy/.env
+ExecStart=/srv/nakupy/venv/bin/uvicorn app.main:app \
+    --host 127.0.0.1 --port 8081 --proxy-headers --forwarded-allow-ips='*'
+Restart=always
+RestartSec=5
+
+# zabezpeceni
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/nakupy/data
+
+[Install]
+WantedBy=multi-user.target

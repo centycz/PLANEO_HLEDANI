@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Kontrola importu · Nákupy{% endblock %}
+{% block content %}
+<h1>{{ document.filename }}</h1>
+<p class="muted">
+  {{ kinds.get(document.kind, document.kind) }}
+  {% if document.store %}· {{ document.store.name }}{% endif %}
+  · {{ states.get(document.status, document.status) }}
+  · {{ document.page_count }} stran · {{ document.row_count }} nalezených položek
+</p>
+
+{% if document.status == 'processing' %}
+  <div class="card" data-watch-import="{{ document.id }}">
+    <p>⏳ PDF se zpracovává, stránka se sama obnoví…</p>
+    <p class="muted">U velkých katalogů to může trvat i pár minut.</p>
+  </div>
+{% elif document.status == 'failed' %}
+  <div class="card">
+    <p class="flash error">Zpracování selhalo: {{ document.error }}</p>
+    <a class="btn" href="/import">Zpět na import</a>
+  </div>
+{% else %}
+  {% if document.error %}<div class="flash error">{{ document.error }}</div>{% endif %}
+
+  <div class="card tight row wrap-row">
+    <form class="inline-form" method="post" action="/import/{{ document.id }}/oznacit">
+      <input type="hidden" name="action" value="all">
+      <button class="btn-sm" type="submit">Označit vše s cenou</button>
+    </form>
+    <form class="inline-form" method="post" action="/import/{{ document.id }}/oznacit">
+      <input type="hidden" name="action" value="discounts">
+      <button class="btn-sm" type="submit">Jen akční položky</button>
+    </form>
+    <form class="inline-form" method="post" action="/import/{{ document.id }}/oznacit">
+      <input type="hidden" name="action" value="none">
+      <button class="btn-sm" type="submit">Odznačit vše</button>
+    </form>
+    <button class="btn-sm" type="button" data-toggle-all="1">✓ vše na stránce</button>
+    <button class="btn-sm" type="button" data-toggle-all="0">✗ nic na stránce</button>
+    <a class="btn-sm btn" href="/import/{{ document.id }}?only_selected={{ 0 if only_selected else 1 }}">
+      {{ 'Zobrazit vše' if only_selected else 'Jen označené' }}
+    </a>
+  </div>
+
+  <form method="post" action="/import/{{ document.id }}/potvrdit">
+    <div class="card table-scroll">
+      <table>
+        <tr>
+          <th></th><th>Název</th><th>Cena</th><th>Původní</th><th>Úsek</th><th>Str.</th>
+        </tr>
+        {% for row in rows %}
+          <tr>
+            <td><input type="checkbox" name="select" value="{{ row.id }}" {{ 'checked' if row.selected }}></td>
+            <td>
+              <input type="text" name="name_{{ row.id }}" value="{{ row.name }}" style="min-width:180px">
+              {% if row.package %}<small class="muted">{{ row.package }}</small>{% endif %}
+              {% if row.imported %}<span class="badge ok">zapsáno</span>{% endif %}
+              <details><summary>zdroj</summary><small class="muted">{{ row.raw_text }}</small></details>
+            </td>
+            <td><input type="text" name="price_{{ row.id }}" value="{{ row.price|qty if row.price is not none }}"
+                       inputmode="decimal" style="width:90px"></td>
+            <td><input type="text" name="original_{{ row.id }}" value="{{ row.original_price|qty if row.original_price is not none }}" inputmode="decimal" style="width:90px"></td>
+            <td>
+              <select name="category_{{ row.id }}" style="min-width:150px">
+                <option value="">— nezařazeno —</option>
+                {% for c in categories %}
+                  <option value="{{ c.id }}" {{ 'selected' if row.category_id == c.id }}>{{ c.icon }} {{ c.name }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td class="muted">{{ row.page }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="empty">
+            Nic se nenašlo. Bývá to sken bez textové vrstvy — položky pak zadej ručně v katalogu.
+          </td></tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% if rows %}
+      <div class="sticky-total between">
+        <span class="muted">Zapíše se jen to, co je zaškrtnuté a má cenu.</span>
+        <button class="primary" type="submit">Zapsat do katalogu</button>
+      </div>
+    {% endif %}
+  </form>
+{% endif %}
+{% endblock %}

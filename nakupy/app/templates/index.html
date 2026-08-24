@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Přehled · Nákupy{% endblock %}
+{% block content %}
+
+{% if current %}
+  {% set p = progress[current.id] %}
+  <div class="card" data-watch-list="{{ current.id }}" data-updated-at="{{ current.updated_at.isoformat() }}">
+    <div class="between">
+      <div>
+        <h1 style="margin-bottom:.1rem">{{ current.title }}</h1>
+        <small>
+          {{ LIST_STATES.get(current.status, current.status) }}
+          {% if current.store %}· {{ current.store.name }}{% endif %}
+          {% if current.shopper %}· nakupuje {{ current.shopper.display_name }}{% endif %}
+        </small>
+      </div>
+      <span class="badge ok" data-progress-text>{{ p.done }} / {{ p.total }}</span>
+    </div>
+    <div class="progress" style="margin:.6rem 0"><span data-progress-bar style="width:{{ p.pct }}%"></span></div>
+    <div class="row wrap-row">
+      <a class="btn btn-primary" href="/seznam/{{ current.id }}">Upravit seznam</a>
+      <a class="btn" href="/nakup/{{ current.id }}">Režim nákupčího</a>
+      {% if p.spent %}<span class="muted">utraceno <strong data-spent>{{ p.spent|money }}</strong></span>{% endif %}
+    </div>
+  </div>
+
+  <div class="card tight">
+    <form method="post" action="/seznam/{{ current.id }}/pridat" class="row wrap-row">
+      <div class="suggest-box" style="flex:1;min-width:200px">
+        <input type="text" name="name" placeholder="Co koupit? např. mléko 1,5%" data-suggest autocomplete="off" required>
+        <input type="hidden" name="catalog_item_id" value="">
+      </div>
+      <input type="text" name="qty" value="1" inputmode="decimal" style="width:70px" aria-label="Množství">
+      <button class="primary" type="submit">Přidat</button>
+    </form>
+  </div>
+{% else %}
+  <div class="card">
+    <h1>Nový nákup</h1>
+    <p class="muted">Založ seznam, napiš do něj položky a nákupčí je v obchodě odškrtá.</p>
+    <form method="post" action="/seznamy/novy">
+      <div class="grid two">
+        <div class="field">
+          <label for="title">Název (nepovinné)</label>
+          <input id="title" type="text" name="title" placeholder="Velký nákup">
+        </div>
+        <div class="field">
+          <label for="store">Obchod</label>
+          <select id="store" name="store_id">
+            <option value="">— nevybráno —</option>
+            {% for store in stores %}<option value="{{ store.id }}">{{ store.name }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <button class="primary btn-block" type="submit">Založit seznam</button>
+    </form>
+  </div>
+{% endif %}
+
+{% if suggestions %}
+<h2>Doporučeno podle historie</h2>
+<div class="card tight">
+  <div class="chip-row">
+    {% for suggestion in suggestions %}
+      <form class="inline-form" method="post" action="/rychle-pridat">
+        <input type="hidden" name="name" value="{{ suggestion.name }}">
+        <input type="hidden" name="catalog_item_id" value="{{ suggestion.catalog_item_id or '' }}">
+        <input type="hidden" name="list_id" value="{{ current.id if current else '' }}">
+        <input type="hidden" name="qty" value="1">
+        <button class="chip {{ 'due' if suggestion.is_due }}" type="submit"
+                title="{{ suggestion.reason }}">
+          + {{ suggestion.name }}
+          <span class="muted">{{ suggestion.count }}×</span>
+        </button>
+      </form>
+    {% endfor %}
+  </div>
+  <small class="muted">Zvýrazněné položky obvykle kupujete zhruba v tomhle intervalu.</small>
+</div>
+{% endif %}
+
+{% if favorites %}
+<h2>Oblíbené</h2>
+<div class="card tight">
+  <div class="chip-row">
+    {% for favorite in favorites %}
+      {% set item = favorite.catalog_item %}
+      <form class="inline-form" method="post" action="/katalog/{{ item.id }}/na-seznam">
+        <input type="hidden" name="list_id" value="{{ current.id if current else '' }}">
+        <input type="hidden" name="qty" value="{{ favorite.default_qty|qty }}">
+        <button class="chip" type="submit">★ {{ item.name }}</button>
+      </form>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if top_deals %}
+<h2>Aktuální slevy z letáku</h2>
+<div class="card">
+  {% for price in top_deals %}
+    <div class="item">
+      <div class="body">
+        <div class="name">{{ price.item.name }}</div>
+        <div class="meta">
+          <strong>{{ price.price|money }}</strong>
+          {% if price.original_price %}<span class="price-strike">{{ price.original_price|money }}</span>{% endif %}
+          {% if price.discount_pct %}<span class="badge deal">−{{ price.discount_pct }} %</span>{% endif %}
+          {% if price.store %}· {{ price.store.name }}{% endif %}
+          {% if price.valid_to %}· do {{ price.valid_to|d }}{% endif %}
+        </div>
+      </div>
+      <form method="post" action="/katalog/{{ price.item_id }}/na-seznam">
+        <input type="hidden" name="list_id" value="{{ current.id if current else '' }}">
+        <button class="btn btn-sm" type="submit">+ na seznam</button>
+      </form>
+    </div>
+  {% endfor %}
+  <p style="margin-top:.7rem"><a href="/slevy">Všechny slevy →</a></p>
+</div>
+{% else %}
+<div class="card tight">
+  <p class="muted">Zatím tu nejsou žádné slevy. Nahraj leták v PDF a položky se natáhnou samy.</p>
+  <a class="btn btn-sm" href="/import">Nahrát leták nebo katalog</a>
+</div>
+{% endif %}
+
+{% if open_lists|length > 1 %}
+<h2>Další otevřené seznamy</h2>
+{% for shopping_list in open_lists[1:] %}
+  {% set p = progress[shopping_list.id] %}
+  <div class="card tight between">
+    <div>
+      <a href="/seznam/{{ shopping_list.id }}"><strong>{{ shopping_list.title }}</strong></a>
+      <div class="meta muted">{{ p.done }} / {{ p.total }} položek{% if shopping_list.store %} · {{ shopping_list.store.name }}{% endif %}</div>
+    </div>
+    <a class="btn btn-sm" href="/nakup/{{ shopping_list.id }}">Nakupovat</a>
+  </div>
+{% endfor %}
+{% endif %}
+
+{% if recent_done %}
+<h2>Poslední dokončené nákupy</h2>
+<div class="card tight">
+  {% for shopping_list in recent_done %}
+    <div class="between" style="padding:.35rem 0">
+      <a href="/seznam/{{ shopping_list.id }}">{{ shopping_list.title }}</a>
+      <span class="muted">{{ shopping_list.finished_at|dt('%-d. %-m.') }} · {{ shopping_list.total_spent|money }}</span>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

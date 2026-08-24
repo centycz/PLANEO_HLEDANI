@@ -1,0 +1,35 @@
+name: Nákupy – testy
+
+on:
+  push:
+    paths:
+      - "nakupy/**"
+      - ".github/workflows/nakupy-tests.yml"
+  pull_request:
+    paths:
+      - "nakupy/**"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: nakupy
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: nakupy/requirements-dev.txt
+
+      - name: Instalace závislostí
+        run: pip install -r requirements-dev.txt
+
+      - name: Testy
+        run: python -m pytest
+
+      - name: Kontrola sestavení Docker image
+        run: docker build -t nakupy:ci .

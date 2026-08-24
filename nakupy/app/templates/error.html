@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Chyba {{ status_code }} · Nákupy{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Chyba {{ status_code }}</h1>
+  <p class="muted">{{ detail }}</p>
+  <p><a class="btn" href="/">Zpět na přehled</a></p>
+</div>
+{% endblock %}

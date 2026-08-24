@@ -1,0 +1,50 @@
+# Nasazení na VPS přes SSH. Spustí se ručně, nebo automaticky po úspěšných
+# testech - podle toho, jestli jsou nastavené secrety VPS_HOST / VPS_USER /
+# VPS_SSH_KEY. Bez nich se job přeskočí a nasazuje se ručně přes deploy.sh.
+name: Nákupy – nasazení na VPS
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Nákupy – testy"]
+    branches: [claude/private-shopping-app-8bb7yj]
+    types: [completed]
+
+concurrency:
+  group: nakupy-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Kontrola nastavení
+        id: check
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          if [ -z "$VPS_HOST" ]; then
+            echo "Secret VPS_HOST není nastavený - nasazení se přeskakuje."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: SSH klíč
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Spuštění deploy.sh na serveru
+        if: steps.check.outputs.ready == 'true'
+        env:
+          APP_PATH: ${{ secrets.VPS_APP_PATH || '/srv/nakupy/PLANEO_HLEDANI/nakupy' }}
+        run: |
+          ssh -o BatchMode=yes "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "cd $APP_PATH && ./deploy/deploy.sh"

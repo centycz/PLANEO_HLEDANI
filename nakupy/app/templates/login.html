@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Přihlášení · Nákupy{% endblock %}
+{% block content %}
+<div class="card" style="max-width:380px;margin:8vh auto 0;">
+  <h1>🛒 Nákupy</h1>
+  <p class="muted">Privátní nákupní seznam pro rodinu a nákupčího.</p>
+  <form method="post" action="/prihlaseni">
+    <input type="hidden" name="next" value="{{ next_url }}">
+    <div class="field">
+      <label for="username">Přihlašovací jméno</label>
+      <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" required autofocus>
+    </div>
+    <div class="field">
+      <label for="password">Heslo</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+    </div>
+    <button class="primary btn-block" type="submit">Přihlásit se</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Nastavení · Nákupy{% endblock %}
+{% block content %}
+<h1>Nastavení</h1>
+
+<div class="card tight">
+  <div class="row wrap-row">
+    <a class="btn" href="/import">📄 Import PDF</a>
+    <a class="btn" href="/historie">📊 Historie</a>
+    <a class="btn" href="/ucet">👤 Můj účet</a>
+  </div>
+  <small class="muted" style="display:block;margin-top:.5rem">
+    Katalog: {{ stats.catalog }} položek · ceny: {{ stats.prices }} · historie: {{ stats.purchases }} nákupů
+  </small>
+</div>
+
+<h2>Trasa obchodem</h2>
+<div class="card">
+  <p class="muted">
+    Pořadí úseků určuje, jak se nákupčímu řadí seznam. Tady je výchozí pořadí,
+    u každého obchodu si ho můžeš upravit zvlášť.
+  </p>
+  <form method="post" action="/nastaveni/kategorie/poradi">
+    {% for category in categories %}
+      <div class="row" style="padding:.25rem 0">
+        <input type="number" name="position_{{ category.id }}" value="{{ category.position }}"
+               style="width:80px" aria-label="Pořadí">
+        <span>{{ category.icon }} {{ category.name }}</span>
+      </div>
+    {% endfor %}
+    <button class="primary" type="submit" style="margin-top:.5rem">Uložit pořadí</button>
+  </form>
+  <hr>
+  <form method="post" action="/nastaveni/kategorie" class="row wrap-row">
+    <input type="text" name="name" placeholder="Nový úsek" style="flex:1;min-width:150px" required>
+    <input type="text" name="icon" value="🛒" style="width:70px" aria-label="Ikona">
+    <input type="number" name="position" value="100" style="width:80px" aria-label="Pořadí">
+    <button type="submit">Přidat úsek</button>
+  </form>
+</div>
+
+<h2>Obchody</h2>
+<div class="card">
+  {% for store in stores %}
+    <div class="item">
+      <div class="body">
+        <div class="name">{{ store.name }} {% if not store.is_active %}<span class="badge">skrytý</span>{% endif %}</div>
+        <div class="meta">{{ store.note }}</div>
+        <details>
+          <summary>upravit</summary>
+          <form method="post" action="/nastaveni/obchod/{{ store.id }}" class="row wrap-row" style="margin-top:.4rem">
+            <input type="text" name="name" value="{{ store.name }}" style="flex:1;min-width:140px">
+            <input type="text" name="note" value="{{ store.note }}" placeholder="poznámka" style="flex:1;min-width:140px">
+            <label class="row"><input type="checkbox" name="is_active" {{ 'checked' if store.is_active }} style="width:auto"> aktivní</label>
+            <button class="btn-sm primary" type="submit">Uložit</button>
+          </form>
+        </details>
+      </div>
+      <a class="btn btn-sm" href="/nastaveni/rozlozeni/{{ store.id }}">Trasa</a>
+    </div>
+  {% endfor %}
+  <hr>
+  <form method="post" action="/nastaveni/obchod" class="row wrap-row">
+    <input type="text" name="name" placeholder="Nový obchod" style="flex:1;min-width:150px" required>
+    <input type="text" name="note" placeholder="poznámka" style="flex:1;min-width:120px">
+    <button type="submit">Přidat obchod</button>
+  </form>
+</div>
+
+<h2>Uživatelé</h2>
+<div class="card">
+  {% for u in users %}
+    <div class="item">
+      <div class="body">
+        <div class="name">{{ u.display_name }} <span class="muted">({{ u.username }})</span></div>
+        <div class="meta">{{ roles.get(u.role, u.role) }}{% if not u.is_active %} · <span class="badge">neaktivní</span>{% endif %}</div>
+        {% if user.is_admin %}
+        <details>
+          <summary>upravit</summary>
+          <form method="post" action="/nastaveni/uzivatel/{{ u.id }}" style="margin-top:.4rem">
+            <div class="row wrap-row">
+              <input type="text" name="display_name" value="{{ u.display_name }}" style="flex:1;min-width:140px">
+              <select name="role" style="width:auto;min-width:160px">
+                {% for key, label in roles.items() %}
+                  <option value="{{ key }}" {{ 'selected' if u.role == key }}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              <label class="row"><input type="checkbox" name="is_active" {{ 'checked' if u.is_active }} style="width:auto"> aktivní</label>
+            </div>
+            <div class="row wrap-row" style="margin-top:.4rem">
+              <input type="password" name="new_password" placeholder="nové heslo (nepovinné)" style="flex:1;min-width:160px" autocomplete="new-password">
+              <button class="btn-sm primary" type="submit">Uložit</button>
+            </div>
+          </form>
+        </details>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  {% if user.is_admin %}
+  <hr>
+  <form method="post" action="/nastaveni/uzivatel">
+    <div class="grid two">
+      <div class="field">
+        <label for="username">Přihlašovací jméno</label>
+        <input id="username" type="text" name="username" autocapitalize="none" required>
+      </div>
+      <div class="field">
+        <label for="display_name">Zobrazované jméno</label>
+        <input id="display_name" type="text" name="display_name">
+      </div>
+      <div class="field">
+        <label for="password">Heslo</label>
+        <input id="password" type="password" name="password" autocomplete="new-password" required>
+      </div>
+      <div class="field">
+        <label for="role">Role</label>
+        <select id="role" name="role">
+          {% for key, label in roles.items() %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <button class="primary" type="submit">Vytvořit uživatele</button>
+  </form>
+  {% else %}
+  <p class="muted">Uživatele může zakládat jen administrátor.</p>
+  {% endif %}
+</div>
+{% endblock %}
