@@ -42,7 +42,7 @@ jobs:
         if: ${{ inputs.domain }}
         run: |
           set -Eeuo pipefail
-          ssh -i ~/.ssh/k "$VPS" 'bash /opt/nakupy/deploy/wire-caddy.sh'
+          ssh -i ~/.ssh/k "$VPS" 'bash "$(ls -d /opt/nakupy ~/nakupy 2>/dev/null | head -1)/deploy/wire-caddy.sh"'
           curl -fsS --retry 10 --retry-delay 6 --retry-all-errors https://nakupy.dalcortile.cz/zdravi
           echo
 
