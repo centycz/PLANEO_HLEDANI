@@ -1,0 +1,13 @@
+# Překryv pro VPS, kde porty 80/443 drží Caddy ze stacku /opt/vydaje.
+# Nákupy se připojí do jeho sítě, takže je Caddy najde jako "nakupy:8000"
+# a sám vyřídí HTTPS certifikát pro nakupy.dalcortile.cz.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d --build
+services:
+  nakupy:
+    networks: [default, proxy]
+
+networks:
+  proxy:
+    external: true
+    name: ${NAKUPY_PROXY_NETWORK:-vydaje_internal}

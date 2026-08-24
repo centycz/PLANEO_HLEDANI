@@ -1,0 +1,143 @@
+# Nasazení nákupní aplikace na VPS.
+#
+# Tento soubor patří do repozitáře, který má v secretech přístup k serveru
+# (VPS_SSH_PRIVATE_KEY, VPS_SSH_KNOWN_HOSTS) — tedy centycz/spartito, jako
+# .github/workflows/deploy-nakupy.yml. Sám kód nákupů se bere z veřejného
+# repozitáře centycz/PLANEO_HLEDANI, takže tu není potřeba žádný token navíc.
+#
+# Existujícího nasazení vydaje se to nijak netýká: workflow je samostatné,
+# spouští se jen ručně a stack /opt/vydaje se nepřestavuje ani nerestartuje.
+name: Deploy nakupy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Pro nasazení napište DEPLOY
+        required: true
+        type: string
+      ref:
+        description: Větev nebo commit v centycz/PLANEO_HLEDANI
+        required: true
+        default: claude/private-shopping-app-8bb7yj
+        type: string
+      wire_proxy:
+        description: Přidat web nakupy.dalcortile.cz do Caddyho (vypnuto = zkušební běh bez zásahu do vydaje)
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nakupy-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy nakupy to VPS
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VPS_HOST: 194.182.90.156
+      VPS_USER: deploy
+      PROJECT_DIR: /opt/nakupy
+      NAKUPY_DOMAIN: nakupy.dalcortile.cz
+    steps:
+      - name: Require explicit confirmation
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          set -Eeuo pipefail
+          test "$CONFIRMATION" = "DEPLOY" || {
+            echo "Pro potvrzení napište DEPLOY." >&2
+            exit 1
+          }
+
+      - name: Check out the shopping app
+        uses: actions/checkout@v4
+        with:
+          repository: centycz/PLANEO_HLEDANI
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: nakupy/requirements-dev.txt
+
+      - name: Run application tests
+        working-directory: nakupy
+        run: |
+          set -Eeuo pipefail
+          pip install --quiet -r requirements-dev.txt
+          python -m pytest
+
+      - name: Create deployment archive
+        id: package
+        run: |
+          set -Eeuo pipefail
+          archive="${RUNNER_TEMP}/nakupy-${GITHUB_SHA}.tar"
+          git archive --format=tar "HEAD:nakupy" -o "$archive"
+          checksum="$(sha256sum "$archive" | cut -d' ' -f1)"
+          echo "archive=$archive" >> "$GITHUB_OUTPUT"
+          echo "checksum=$checksum" >> "$GITHUB_OUTPUT"
+
+      - name: Configure pinned SSH access
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.VPS_SSH_KNOWN_HOSTS }}
+        run: |
+          set -Eeuo pipefail
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$SSH_KNOWN_HOSTS"
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$SSH_PRIVATE_KEY" > "$HOME/.ssh/nakupy_deploy"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/nakupy_deploy" "$HOME/.ssh/known_hosts"
+          ssh-keygen -y -f "$HOME/.ssh/nakupy_deploy" >/dev/null
+
+      - name: Upload archive
+        env:
+          ARCHIVE: ${{ steps.package.outputs.archive }}
+        run: |
+          set -Eeuo pipefail
+          scp -i "$HOME/.ssh/nakupy_deploy" "$ARCHIVE" "${VPS_USER}@${VPS_HOST}:/tmp/"
+
+      - name: Deploy on VPS
+        env:
+          ARCHIVE: ${{ steps.package.outputs.archive }}
+          ARCHIVE_SHA256: ${{ steps.package.outputs.checksum }}
+          ADMIN_PASSWORD: ${{ secrets.NAKUPY_ADMIN_PASSWORD }}
+          WIRE_PROXY: ${{ inputs.wire_proxy && '1' || '0' }}
+        run: |
+          set -Eeuo pipefail
+          remote_archive="/tmp/$(basename "$ARCHIVE")"
+          ssh -i "$HOME/.ssh/nakupy_deploy" "${VPS_USER}@${VPS_HOST}" \
+            "DEPLOY_SHA='${GITHUB_SHA}' PROJECT_DIR='${PROJECT_DIR}' \
+             DEPLOY_ARCHIVE='${remote_archive}' DEPLOY_ARCHIVE_SHA256='${ARCHIVE_SHA256}' \
+             NAKUPY_DOMAIN='${NAKUPY_DOMAIN}' NAKUPY_ADMIN_PASSWORD='${ADMIN_PASSWORD}' \
+             NAKUPY_WIRE_PROXY='${WIRE_PROXY}' bash -s" < nakupy/deploy/deploy-nakupy.sh
+
+      - name: Verify that vydaje still responds
+        run: |
+          set -Eeuo pipefail
+          curl --fail --silent --show-error --retry 3 --retry-delay 2 \
+            https://vydaje.dalcortile.cz/api/health
+          echo
+
+      - name: Verify public health endpoint
+        if: ${{ inputs.wire_proxy }}
+        run: |
+          set -Eeuo pipefail
+          # při prvním nasazení si Caddy musí vyzvednout certifikát, dáme mu čas
+          curl --fail --silent --show-error --retry 10 --retry-delay 6 --retry-all-errors \
+            "https://${NAKUPY_DOMAIN}/zdravi"
+          echo
+
+      - name: Remove local SSH material
+        if: always()
+        run: rm -f "$HOME/.ssh/nakupy_deploy"

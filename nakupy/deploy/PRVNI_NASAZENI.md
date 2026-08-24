@@ -1,91 +1,120 @@
-# První nasazení na VPS
+# Nasazení na VPS
 
-Postup je stejný jako u `vydaje.dalcortile.cz`, jen se změní subdoména a port.
-Aplikace poslouchá na `127.0.0.1:8081`, ven ji pouští nginx na hostiteli — takže
-si nijak nekoliduje s tím, co na serveru běží teď.
-
-## 1. DNS
-
-U domény `dalcortile.cz` přidej `A` záznam:
+Server už provozuje `vydaje.dalcortile.cz`. Porty 80 a 443 tam drží **Caddy
+v kontejneru** ze stacku `/opt/vydaje` a nasazuje se přes **GitHub Actions** —
+z chatu se na server po SSH nedostane, klíč používá až runner GitHubu. Nákupy
+jedou stejnou cestou, takže se nic nevymýšlí znovu.
 
 ```
-nakupy.dalcortile.cz.   A   <IP adresa VPS>
+push na GitHub → Actions (runner má SSH klíč v secretech)
+               → scp archivu na VPS → deploy/deploy-nakupy.sh
+               → /opt/nakupy: docker compose up
+               → Caddy dostane další web a načte konfiguraci
 ```
 
-## 2. Kód na server
+Nákupy poslouchají na `127.0.0.1:8081` a zároveň jsou v docker síti Caddyho,
+který je najde jako `nakupy:8000` a sám vyřídí HTTPS certifikát.
+
+## Co je potřeba jednou nastavit
+
+1. **DNS** — `nakupy.dalcortile.cz` → IP serveru. (Hotovo.)
+2. **Workflow s přístupem k serveru.** Přístupové údaje (`VPS_SSH_PRIVATE_KEY`,
+   `VPS_SSH_KNOWN_HOSTS`) jsou v secretech repozitáře `centycz/spartito`.
+   GitHub hodnoty secretů nikdy nevydá — nejde je zkopírovat jinam, ani je
+   nemá k dispozici žádný chat. Workflow proto patří tam, kde ty klíče jsou:
+   hotový soubor je v [`github/deploy-nakupy.yml`](github/deploy-nakupy.yml),
+   stačí ho ve spartitu uložit jako `.github/workflows/deploy-nakupy.yml`.
+   Druhá možnost: vygenerovat nový pár klíčů, veřejný přidat uživateli
+   `deploy` do `~/.ssh/authorized_keys` a soukromý uložit jako secret
+   v `PLANEO_HLEDANI` — to ale vyžaduje přístup na server.
+3. **Volitelně secret `NAKUPY_ADMIN_PASSWORD`.** Bez něj skript při prvním
+   spuštění vygeneruje náhodné heslo a vypíše ho do logu nasazení; po prvním
+   přihlášení si ho změň v Nastavení.
+
+## Spuštění
+
+**Actions → Deploy nakupy → Run workflow**, napsat `DEPLOY` a vybrat větev.
+
+Přepínač **„Přidat web do Caddyho"** rozhoduje, jestli se sáhne na stack
+vydaje. Doporučený postup napoprvé:
+
+1. **Zkušební běh s vypnutým přepínačem** — vznikne `/opt/nakupy`, aplikace
+   naběhne na `127.0.0.1:8081`, konfigurace Caddyho se **vůbec neotevře**.
+2. **Ostrý běh se zapnutým přepínačem** — teprve teď se přidá web pro doménu.
+
+## Co dělá krok, který se dotýká vydaje
+
+Je to jediné místo, kde nasazení nákupů sahá na cizí stack. Je vyčleněné do
+samostatného skriptu [`wire-caddy.sh`](wire-caddy.sh), aby šlo spustit i vrátit
+zvlášť, a je postavené tak, aby vydaje nemohly spadnout:
+
+1. Zapíše se záloha `/opt/vydaje/Caddyfile.<datum>.bak`.
+2. Nová konfigurace se složí do dočasného souboru a **ověří se v odhozeném
+   kontejneru** (`caddy validate`) — běžícího Caddyho se to netýká.
+3. Teprve po úspěšné kontrole se soubor vymění a zavolá se `caddy reload`,
+   což je výměna konfigurace **bez výpadku**.
+4. Kdyby reload přesto selhal, vrátí se původní soubor a načte se zpět.
+
+Běžící Caddy se **nikdy nerestartuje** a stack vydaje se nepřestavuje.
+Workflow navíc na konci ověří, že `vydaje.dalcortile.cz/api/health` pořád
+odpovídá. Nejhorší možný výsledek je „nákupy nedostaly doménu", ne výpadek.
+
+Přidaný blok v Caddyfile vypadá takhle a týká se výhradně nové domény:
+
+```caddyfile
+nakupy.dalcortile.cz {
+  reverse_proxy nakupy:8000
+}
+```
+
+Aby zůstal i po příštím nasazení vydaje (které `Caddyfile` přepíše z repozitáře),
+je potřeba stejný blok doplnit i do `Caddyfile` v repozitáři spartito.
+
+## Co se na serveru vytvoří
+
+| Cesta | Obsah |
+| --- | --- |
+| `/opt/nakupy` | aplikace, `docker-compose.yml`, `.env` |
+| `/opt/nakupy/data` | SQLite databáze a nahraná PDF |
+| `/opt/nakupy/data/backup` | záloha databáze před každým nasazením (drží se 14) |
+
+Kontejner se připojí do sítě, ve které běží Caddy — to je nutné, aby na něj
+Caddy viděl. Znamená to, že je ve stejné docker síti jako ostatní kontejnery
+vydaje; nákupy si k nim ale nikam nesahají a žádné přihlašovací údaje k nim
+nemají.
+
+## Ruční nasazení, když má někdo SSH na server
 
 ```bash
-ssh root@<vps>
-mkdir -p /srv/nakupy && cd /srv/nakupy
-git clone https://github.com/centycz/PLANEO_HLEDANI.git
-cd PLANEO_HLEDANI
-git checkout claude/private-shopping-app-8bb7yj
-cd nakupy
-```
-
-## 3. Konfigurace
-
-```bash
+ssh deploy@194.182.90.156
+sudo mkdir -p /opt/nakupy && sudo chown deploy /opt/nakupy
+git clone --branch claude/private-shopping-app-8bb7yj \
+  https://github.com/centycz/PLANEO_HLEDANI.git /tmp/ph
+cp -a /tmp/ph/nakupy/. /opt/nakupy/ && cd /opt/nakupy
 cp .env.example .env
-# vygeneruj tajný klíč pro session cookie
 sed -i "s|^NAKUPY_SECRET_KEY=.*|NAKUPY_SECRET_KEY=$(openssl rand -hex 32)|" .env
-nano .env      # nastav NAKUPY_ADMIN_USER a NAKUPY_ADMIN_PASSWORD
+nano .env                                    # nastav NAKUPY_ADMIN_PASSWORD
+echo "NAKUPY_PROXY_NETWORK=vydaje_internal" >> .env
+docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d --build
+curl -s http://127.0.0.1:8081/zdravi
 ```
 
-Heslo z `.env` se použije jen při úplně prvním startu, kdy se zakládá první
-účet. Potom se mění v aplikaci v Nastavení.
-
-## 4. Start
+Napojení na Caddy zvládne stejný skript, který používá i workflow — jde
+spustit i vrátit samostatně:
 
 ```bash
-docker compose up -d --build
-curl http://127.0.0.1:8081/zdravi     # {"status":"ok","version":"1.0.0"}
+bash /opt/nakupy/deploy/wire-caddy.sh            # přidá web pro doménu
+bash /opt/nakupy/deploy/wire-caddy.sh --remove   # vrátí Caddyfile do původního stavu
 ```
-
-## 5. nginx + HTTPS
-
-```bash
-cp deploy/nginx/nakupy.conf /etc/nginx/sites-available/nakupy.dalcortile.cz
-ln -s /etc/nginx/sites-available/nakupy.dalcortile.cz /etc/nginx/sites-enabled/
-nginx -t && systemctl reload nginx
-certbot --nginx -d nakupy.dalcortile.cz
-```
-
-Hotovo — aplikace běží na <https://nakupy.dalcortile.cz>.
-
-## 6. Další aktualizace
-
-```bash
-cd /srv/nakupy/PLANEO_HLEDANI/nakupy
-./deploy/deploy.sh
-```
-
-Skript stáhne novou verzi z GitHubu, zazálohuje databázi, přestaví image
-a počká, až aplikace naběhne.
 
 ## Zálohy
 
-Data (SQLite databáze + nahraná PDF) jsou v adresáři `nakupy/data`. Záloha:
-
 ```bash
-tar czf /root/nakupy-$(date +%F).tar.gz -C /srv/nakupy/PLANEO_HLEDANI/nakupy data
+tar czf ~/nakupy-$(date +%F).tar.gz -C /opt/nakupy data
 ```
 
-`deploy/deploy.sh` navíc před každou aktualizací odloží kopii databáze do
-`data/backup/` a drží posledních 14 kusů.
+## Server bez Caddyho
 
-## Varianta bez Dockeru
-
-Když nechceš Docker, použij `deploy/systemd/nakupy.service`:
-
-```bash
-adduser --system --group nakupy
-mkdir -p /srv/nakupy/{app,data}
-python3 -m venv /srv/nakupy/venv
-/srv/nakupy/venv/bin/pip install -r requirements.txt
-cp -r app /srv/nakupy/app/
-cp .env /srv/nakupy/.env
-chown -R nakupy:nakupy /srv/nakupy
-cp deploy/systemd/nakupy.service /etc/systemd/system/
-systemctl daemon-reload && systemctl enable --now nakupy
-```
+Pro server, kde porty drží nginx, je připravená konfigurace v
+[`nginx/nakupy.conf`](nginx/nakupy.conf) a systemd unit v
+[`systemd/nakupy.service`](systemd/nakupy.service) pro běh bez Dockeru.
