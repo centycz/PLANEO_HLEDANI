@@ -1,0 +1,55 @@
+name: Deploy nakupy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Pro nasazení napište DEPLOY
+        required: true
+        type: string
+      domain:
+        description: Přidat i doménu nakupy.dalcortile.cz do Caddyho
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VPS: deploy@194.182.90.156
+      SRC: https://raw.githubusercontent.com/centycz/PLANEO_HLEDANI/claude/private-shopping-app-8bb7yj/nakupy/deploy/install-on-vps.sh
+      CONFIRMATION: ${{ inputs.confirmation }}
+      WITH_DOMAIN: ${{ inputs.domain }}
+      SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+      SSH_KNOWN_HOSTS: ${{ secrets.VPS_SSH_KNOWN_HOSTS }}
+    steps:
+      - name: Install the shopping app on the VPS
+        run: |
+          set -Eeuo pipefail
+          test "$CONFIRMATION" = DEPLOY || { echo 'Napište DEPLOY.' >&2; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/k
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/k ~/.ssh/known_hosts
+          curl -fsSL "$SRC" | ssh -i ~/.ssh/k "$VPS" bash -s
+
+      - name: Add the domain to Caddy
+        if: ${{ inputs.domain }}
+        run: |
+          set -Eeuo pipefail
+          ssh -i ~/.ssh/k "$VPS" 'bash /opt/nakupy/deploy/wire-caddy.sh'
+          curl -fsS --retry 10 --retry-delay 6 --retry-all-errors https://nakupy.dalcortile.cz/zdravi
+          echo
+
+      - name: Check that vydaje still responds
+        if: always()
+        run: curl -fsS --retry 3 --retry-delay 2 https://vydaje.dalcortile.cz/api/health || true
+
+      - name: Clean up the key
+        if: always()
+        run: rm -f ~/.ssh/k

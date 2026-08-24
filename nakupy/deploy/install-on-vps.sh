@@ -1,38 +1,78 @@
 #!/usr/bin/env bash
-# Instalace nákupní aplikace přímo na serveru - určeno k ručnímu spuštění
-# z terminálu (klidně z mobilu). Dá se pouštět opakovaně: podruhé aplikaci
-# jen aktualizuje, data ani .env nepřepíše.
+# Instalace nákupní aplikace přímo na serveru.
 #
-#   curl -fsSL <adresa tohoto skriptu> -o /tmp/nakupy.sh
-#   sudo bash /tmp/nakupy.sh
+# Dá se spustit dvěma způsoby:
+#   * ručně z terminálu:   sudo bash /tmp/nakupy.sh
+#   * bez přihlášení k serveru, přes GitHub Actions, které skript pošlou
+#     po SSH:              curl -fsSL <adresa> | ssh deploy@server bash -s
 #
-# Konfiguraci reverzní proxy (Caddy) tenhle skript zásadně NEMĚNÍ - na to je
-# samostatný deploy/wire-caddy.sh, aby šlo nejdřív ověřit, že aplikace běží.
+# Root není potřeba: když skript běží pod běžným uživatelem bez sudo,
+# nainstaluje se do ~/nakupy místo /opt/nakupy.
+#
+# Opakované spuštění aplikaci jen aktualizuje - data ani .env nepřepíše.
+# Konfiguraci reverzní proxy (Caddy) tenhle skript zásadně NEMĚNÍ, na to je
+# samostatný deploy/wire-caddy.sh.
 set -Eeuo pipefail
 
-REPO="${NAKUPY_REPO:-https://github.com/centycz/PLANEO_HLEDANI.git}"
+REPO_URL="${NAKUPY_REPO:-https://github.com/centycz/PLANEO_HLEDANI}"
 BRANCH="${NAKUPY_BRANCH:-claude/private-shopping-app-8bb7yj}"
-PROJECT_DIR="${PROJECT_DIR:-/opt/nakupy}"
 HOST_PORT="${NAKUPY_HOST_PORT:-8081}"
 
-say() { printf '\n\033[1m==> %s\033[0m\n' "$1"; }
-die() { printf '\n\033[31mChyba: %s\033[0m\n' "$1" >&2; exit 1; }
+say() { printf '\n==> %s\n' "$1"; }
+die() { printf '\nChyba: %s\n' "$1" >&2; exit 1; }
 
-[[ "$(id -u)" == "0" ]] || die "Spusť skript přes sudo: sudo bash $0"
+# --- práva: root, sudo bez hesla, nebo ani jedno --------------------------
+SUDO=""
+if [[ "$(id -u)" != "0" ]] && sudo -n true 2>/dev/null; then
+  SUDO="sudo"
+fi
+
+if [[ -z "${PROJECT_DIR:-}" ]]; then
+  if [[ "$(id -u)" == "0" || -n "${SUDO}" || -w /opt ]]; then
+    PROJECT_DIR=/opt/nakupy
+  else
+    PROJECT_DIR="${HOME}/nakupy"
+    say "Bez práv roota - instaluji do ${PROJECT_DIR}"
+  fi
+fi
+
 command -v docker >/dev/null || die "Docker na serveru není."
-docker compose version >/dev/null 2>&1 || die "Chybí 'docker compose' (plugin v2)."
-command -v git >/dev/null || die "Chybí git."
+# docker může vyžadovat sudo, když uživatel není ve skupině docker
+if ! docker info >/dev/null 2>&1; then
+  [[ -n "${SUDO}" ]] || die "Na docker chybí práva. Spusť skript přes sudo."
+  DOCKER=(${SUDO} docker)
+else
+  DOCKER=(docker)
+fi
+"${DOCKER[@]}" compose version >/dev/null 2>&1 || die "Chybí 'docker compose' (plugin v2)."
 command -v openssl >/dev/null || die "Chybí openssl."
 
+# --- stažení aplikace -----------------------------------------------------
 say "Stahuji aplikaci z větve ${BRANCH}"
 checkout="$(mktemp -d /tmp/nakupy-src.XXXXXX)"
 trap 'rm -rf -- "${checkout}"' EXIT
-git clone --quiet --depth 1 --branch "${BRANCH}" "${REPO}" "${checkout}" \
-  || die "Stažení se nepodařilo. Když je repozitář neveřejný, přihlas se ke gitu nebo použij NAKUPY_REPO s tokenem."
-[[ -d "${checkout}/nakupy" ]] || die "Ve stažené větvi chybí adresář nakupy/."
-revision="$(git -C "${checkout}" rev-parse --short HEAD)"
 
+if command -v git >/dev/null; then
+  git clone --quiet --depth 1 --branch "${BRANCH}" "${REPO_URL}.git" "${checkout}" \
+    || die "Stažení se nepodařilo. Když je repozitář neveřejný, použij NAKUPY_REPO s tokenem."
+  revision="$(git -C "${checkout}" rev-parse --short HEAD)"
+else
+  # bez gitu stáhneme archiv větve
+  slug="${REPO_URL#https://github.com/}"
+  curl -fsSL "https://codeload.github.com/${slug}/tar.gz/refs/heads/${BRANCH}" \
+    | tar xz -C "${checkout}" --strip-components=1 \
+    || die "Stažení archivu se nepodařilo."
+  revision="${BRANCH}"
+fi
+[[ -d "${checkout}/nakupy" ]] || die "Ve stažené větvi chybí adresář nakupy/."
+
+# --- adresář projektu -----------------------------------------------------
 say "Připravuji ${PROJECT_DIR}"
+if [[ ! -d "${PROJECT_DIR}" ]]; then
+  ${SUDO} mkdir -p "${PROJECT_DIR}" || die "Nepodařilo se vytvořit ${PROJECT_DIR}."
+  [[ -n "${SUDO}" ]] && ${SUDO} chown "$(id -u):$(id -g)" "${PROJECT_DIR}"
+fi
+[[ -w "${PROJECT_DIR}" ]] || die "Do ${PROJECT_DIR} se nedá zapisovat. Spusť skript přes sudo."
 mkdir -p "${PROJECT_DIR}/data"
 
 first_run=0
@@ -53,7 +93,6 @@ ENVEOF
   chmod 600 "${PROJECT_DIR}/.env"
 fi
 
-# záloha databáze před každou aktualizací
 if [[ -f "${PROJECT_DIR}/data/nakupy.db" ]]; then
   say "Zálohuji databázi"
   mkdir -p "${PROJECT_DIR}/data/backup"
@@ -62,23 +101,22 @@ if [[ -f "${PROJECT_DIR}/data/nakupy.db" ]]; then
   ls -1t "${PROJECT_DIR}/data/backup"/nakupy-*.db 2>/dev/null | tail -n +15 | xargs -r rm --
 fi
 
-# soubory aplikace se přepíšou, data a .env zůstávají
 say "Kopíruji soubory aplikace"
 rm -rf "${PROJECT_DIR}/app" "${PROJECT_DIR}/deploy" "${PROJECT_DIR}/tests"
 cp -a "${checkout}/nakupy/." "${PROJECT_DIR}/"
-rm -f "${PROJECT_DIR}/.env.example.bak"
 printf '%s\n' "${revision}" > "${PROJECT_DIR}/.deploy-revision"
 
 # --- síť reverzní proxy ---------------------------------------------------
-# Aby na aplikaci viděl Caddy, který na serveru drží porty 80/443, musí být
-# ve stejné docker síti. Když žádný Caddy neběží, jede aplikace jen lokálně.
+# Aby na aplikaci viděl Caddy, který drží porty 80/443, musí být ve stejné
+# docker síti. Když žádný Caddy neběží, jede aplikace jen lokálně.
 compose_files=(-f docker-compose.yml)
-proxy_network="$(
-  caddy_name="$(docker ps --filter 'name=caddy' --format '{{.Names}}' | head -n1)"
-  [[ -n "${caddy_name}" ]] && docker inspect "${caddy_name}" \
+caddy_name="$("${DOCKER[@]}" ps --filter 'name=caddy' --format '{{.Names}}' 2>/dev/null | head -n1 || true)"
+proxy_network=""
+if [[ -n "${caddy_name}" ]]; then
+  proxy_network="$("${DOCKER[@]}" inspect "${caddy_name}" \
     --format '{{range $name, $_ := .NetworkSettings.Networks}}{{$name}} {{end}}' 2>/dev/null \
-    | tr ' ' '\n' | grep -v '^$' | head -n1
-)" || true
+    | tr ' ' '\n' | grep -v '^$' | head -n1 || true)"
+fi
 
 cd "${PROJECT_DIR}"
 if [[ -n "${proxy_network}" ]]; then
@@ -94,43 +132,33 @@ else
 fi
 
 say "Sestavuji a spouštím kontejner (chvíli to potrvá)"
-docker compose "${compose_files[@]}" config --quiet
-docker compose "${compose_files[@]}" up -d --build --remove-orphans
+"${DOCKER[@]}" compose "${compose_files[@]}" config --quiet
+"${DOCKER[@]}" compose "${compose_files[@]}" up -d --build --remove-orphans
 
 say "Čekám, až aplikace naběhne"
 health='starting'
 for _ in $(seq 1 45); do
-  health="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' nakupy 2>/dev/null || true)"
+  health="$("${DOCKER[@]}" inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' nakupy 2>/dev/null || true)"
   [[ "${health}" == 'healthy' ]] && break
   sleep 2
 done
 if [[ "${health}" != 'healthy' ]]; then
-  docker compose "${compose_files[@]}" logs --tail=120
+  "${DOCKER[@]}" compose "${compose_files[@]}" logs --tail=120
   die "Aplikace nenaskočila (stav: ${health}). Výpis je nahoře."
 fi
 
 curl --fail --silent --show-error "http://127.0.0.1:${HOST_PORT}/zdravi" && echo
 
-cat <<SUMMARY
-
-========================================================================
- Nákupy běží: http://127.0.0.1:${HOST_PORT}   (verze ${revision})
-SUMMARY
+echo
+echo "========================================================================"
+echo " Nákupy běží: http://127.0.0.1:${HOST_PORT}   (verze ${revision})"
 if [[ "${first_run}" == "1" ]]; then
-  cat <<SUMMARY
- Přihlášení:  $(grep '^NAKUPY_ADMIN_USER=' .env | cut -d= -f2-)  /  $(grep '^NAKUPY_ADMIN_PASSWORD=' .env | cut -d= -f2-)
- Heslo si po prvním přihlášení změň v Nastavení.
-SUMMARY
+  echo " Přihlášení:  $(grep '^NAKUPY_ADMIN_USER=' .env | cut -d= -f2-)  /  $(grep '^NAKUPY_ADMIN_PASSWORD=' .env | cut -d= -f2-)"
+  echo " Heslo si po prvním přihlášení změň v Nastavení."
 fi
-cat <<SUMMARY
-
- Zatím to jede jen lokálně - na stack vydaje se nesáhlo.
- Doménu nakupy.dalcortile.cz přidáš tímhle:
-
-     sudo bash ${PROJECT_DIR}/deploy/wire-caddy.sh
-
- A kdyby cokoli, vrátí se to zpátky:
-
-     sudo bash ${PROJECT_DIR}/deploy/wire-caddy.sh --remove
-========================================================================
-SUMMARY
+echo
+echo " Na stack vydaje se zatím nesáhlo. Doménu přidá:"
+echo "     bash ${PROJECT_DIR}/deploy/wire-caddy.sh"
+echo " a vrátí zpět:"
+echo "     bash ${PROJECT_DIR}/deploy/wire-caddy.sh --remove"
+echo "========================================================================"
