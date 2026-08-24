@@ -15,6 +15,33 @@ push na GitHub → Actions (runner má SSH klíč v secretech)
 Nákupy poslouchají na `127.0.0.1:8081` a zároveň jsou v docker síti Caddyho,
 který je najde jako `nakupy:8000` a sám vyřídí HTTPS certifikát.
 
+## Nejrychlejší cesta: terminál na serveru
+
+Když se dá na server přihlásit přes SSH, nepotřebuje se nic dalšího —
+ani GitHub Actions, ani žádné secrety:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/centycz/PLANEO_HLEDANI/BRANCH/nakupy/deploy/install-on-vps.sh -o /tmp/nakupy.sh
+sudo bash /tmp/nakupy.sh
+```
+
+Skript stáhne aplikaci, založí `/opt/nakupy`, vygeneruje `.env` s náhodným
+klíčem i heslem, sestaví a spustí kontejner a počká, až naběhne. Na konci
+vypíše přihlašovací údaje. **Konfigurace Caddyho se přitom vůbec neotevře** —
+aplikace zatím jede jen na `127.0.0.1:8081`.
+
+Doména se přidá až zvlášť, když je jasné, že aplikace běží:
+
+```bash
+sudo bash /opt/nakupy/deploy/wire-caddy.sh            # přidá nakupy.dalcortile.cz
+sudo bash /opt/nakupy/deploy/wire-caddy.sh --remove   # vrátí Caddyfile do původního stavu
+```
+
+Stejný skript slouží i pro pozdější aktualizace: pustí se znovu, data ani
+`.env` nepřepíše a databázi před přepsáním souborů zazálohuje.
+
+## Druhá cesta: GitHub Actions
+
 ## Co je potřeba jednou nastavit
 
 1. **DNS** — `nakupy.dalcortile.cz` → IP serveru. (Hotovo.)
@@ -83,7 +110,7 @@ Caddy viděl. Znamená to, že je ve stejné docker síti jako ostatní kontejne
 vydaje; nákupy si k nim ale nikam nesahají a žádné přihlašovací údaje k nim
 nemají.
 
-## Ruční nasazení, když má někdo SSH na server
+## Ruční nasazení krok za krokem
 
 ```bash
 ssh deploy@194.182.90.156

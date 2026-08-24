@@ -27,7 +27,7 @@ if [[ ! -f "${caddyfile}" ]]; then
   exit 1
 fi
 
-caddy_container="$(docker ps --filter 'name=caddy' --format '{{.Names}}' | head -n1)"
+caddy_container="$(docker ps --filter 'name=caddy' --format '{{.Names}}' | head -n1 || true)"
 if [[ -z "${caddy_container}" ]]; then
   echo 'Caddy neběží - web se nepřidává.' >&2
   exit 1
